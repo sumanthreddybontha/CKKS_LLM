@@ -1,67 +1,60 @@
-// Version 3
+// weights applied to encrypted vector before dot
 #include "seal/seal.h"
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 using namespace seal;
-
-vector<double> generate_matrix(int rows, int cols, double value = 1.0) {
-    vector<double> mat(rows * cols, value);
-    for (int i = 0; i < rows * cols; ++i) mat[i] = (i % 7) + 1;
-    return mat;
-}
-
-vector<double> extract_patch(const vector<double> &matrix, int row, int col, int stride = 10) {
-    vector<double> patch;
-    for (int i = 0; i < 3; ++i)
-        for (int j = 0; j < 3; ++j)
-            patch.push_back(matrix[(row + i) * stride + (col + j)]);
-    return patch;
-}
 
 int main() {
     EncryptionParameters parms(scheme_type::ckks);
     parms.set_poly_modulus_degree(8192);
     parms.set_coeff_modulus(CoeffModulus::Create(8192, {60, 40, 40, 60}));
-    double scale = pow(2.0, 40);
     SEALContext context(parms);
 
     KeyGenerator keygen(context);
-    auto public_key = keygen.public_key();
-    auto secret_key = keygen.secret_key();
-    auto relin_keys = keygen.relin_keys();
+    PublicKey public_key; keygen.create_public_key(public_key);
+    SecretKey secret_key = keygen.secret_key();
+    RelinKeys relin_keys; keygen.create_relin_keys(relin_keys);
+    GaloisKeys gal_keys; keygen.create_galois_keys(gal_keys);
 
     Encryptor encryptor(context, public_key);
-    Evaluator evaluator(context);
     Decryptor decryptor(context, secret_key);
+    Evaluator evaluator(context);
     CKKSEncoder encoder(context);
+    double scale = pow(2.0, 40);
 
-    auto matrix = generate_matrix(10, 10);
-    vector<double> kernel = {0, 1, 0, 1, -4, 1, 0, 1, 0}; // Laplacian kernel
-    Plaintext pt_kernel;
-    encoder.encode(kernel, scale, pt_kernel);
+    vector<double> vec1 = {1.0, 1.2, 1.4, 1.6};
+    vector<double> vec2 = {0.6, 0.8, 1.0, 1.2};
+    vector<double> weights = {1.5, 1.0, 0.5, 1.0};
 
-    for (int i = 0; i < 8; ++i)
-        for (int j = 0; j < 8; ++j) {
-            auto patch = extract_patch(matrix, i, j);
-            Plaintext pt_patch;
-            encoder.encode(patch, scale, pt_patch);
-            Ciphertext ct;
-            encryptor.encrypt(pt_patch, ct);
-            evaluator.multiply_plain_inplace(ct, pt_kernel);
-            evaluator.relinearize_inplace(ct, relin_keys);
-            evaluator.rescale_to_next_inplace(ct);
+    Plaintext pt1, pt2, pt_w;
+    encoder.encode(vec1, scale, pt1);
+    encoder.encode(vec2, scale, pt2);
+    encoder.encode(weights, scale, pt_w);
 
-            Plaintext result;
-            decryptor.decrypt(ct, result);
-            vector<double> dec;
-            encoder.decode(result, dec);
-            double dot_sum = 0;
-            for (auto x : dec) dot_sum += x;
-            cout << dot_sum << " ";
-        }
+    Ciphertext ct1, ct2;
+    encryptor.encrypt(pt1, ct1);
+    encryptor.encrypt(pt2, ct2);
 
-    cout << endl;
+    evaluator.multiply_plain_inplace(ct1, pt_w);
+    evaluator.rescale_to_next_inplace(ct1);
+
+    evaluator.multiply(ct1, ct2, ct1);
+    evaluator.relinearize_inplace(ct1, relin_keys);
+    evaluator.rescale_to_next_inplace(ct1);
+
+    for (int i = 1; i < 4; i <<= 1) {
+        Ciphertext rotated;
+        evaluator.rotate_vector(ct1, i, gal_keys, rotated);
+        evaluator.add_inplace(ct1, rotated);
+    }
+
+    Plaintext result_plain;
+    vector<double> result;
+    decryptor.decrypt(ct1, result_plain);
+    encoder.decode(result_plain, result);
+    cout << "Weighted dot product: " << result[0] << endl;
     return 0;
 }

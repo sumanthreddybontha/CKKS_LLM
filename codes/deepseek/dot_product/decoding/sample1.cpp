@@ -5,117 +5,91 @@
 using namespace std;
 using namespace seal;
 
-void print_parameters(const shared_ptr<SEALContext> &context) {
-    auto &context_data = *context->first_context_data();
+void print_parameters(const SEALContext &context) {
+    auto &context_data = *context.key_context_data();
     cout << "Encryption parameters:" << endl;
     cout << "  scheme: CKKS" << endl;
     cout << "  poly_modulus_degree: " << context_data.parms().poly_modulus_degree() << endl;
-    cout << "  coeff_modulus size: ";
-    cout << context_data.total_coeff_modulus_bit_count() << " bits" << endl;
-    cout << "  scale: " << context_data.parms().coeff_modulus().back().value() << endl;
+    cout << "  coeff_modulus size: " << context_data.total_coeff_modulus_bit_count() << " bits" << endl;
+    cout << "  scale: " << context_data.parms().coeff_modulus().back().bit_count() << " bits" << endl;
 }
 
 int main() {
-    // Step 1: Set up CKKS parameters
+    // Step 1: CKKS setup
     EncryptionParameters parms(scheme_type::ckks);
     size_t poly_modulus_degree = 8192;
     parms.set_poly_modulus_degree(poly_modulus_degree);
-    
-    // Custom coefficient modulus for 3x3 kernel dot product with 10x10 matrix
-    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 30, 20, 30 }));
-    
-    // Create context
-    auto context = SEALContext::Create(parms);
+    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 60, 40, 40, 60 }));
+    SEALContext context(parms);
     print_parameters(context);
-    
-    // Step 2: Generate keys
+
+    // Step 2: Keys and helpers
     KeyGenerator keygen(context);
-    auto public_key = keygen.public_key();
-    auto secret_key = keygen.secret_key();
-    auto relin_keys = keygen.relin_keys();
+    PublicKey public_key;
+    SecretKey secret_key = keygen.secret_key();
+    keygen.create_public_key(public_key);
+    RelinKeys relin_keys;
+    keygen.create_relin_keys(relin_keys);
     Encryptor encryptor(context, public_key);
-    Evaluator evaluator(context);
     Decryptor decryptor(context, secret_key);
-    
-    // CKKS encoder
+    Evaluator evaluator(context);
     CKKSEncoder encoder(context);
-    size_t slot_count = encoder.slot_count();
-    cout << "Number of slots: " << slot_count << endl;
-    
-    // Step 3: Prepare the data
-    // 10x10 matrix flattened to 100 elements
-    vector<double> matrix(100, 0.0);
-    for (int i = 0; i < 100; i++) {
-        matrix[i] = static_cast<double>(i % 10);
-    }
-    
-    // 3x3 kernel flattened to 9 elements
-    vector<double> kernel = {1.0, 0.0, -1.0, 
-                             2.0, 0.0, -2.0, 
-                             1.0, 0.0, -1.0};
-    
-    // Step 4: Encode and encrypt
-    double scale = pow(2.0, 20);
-    Plaintext plain_matrix, plain_kernel;
+
+    double scale = pow(2.0, 40);
+
+    // Step 3: Data (10x10 matrix + 3x3 kernel)
+    vector<double> matrix(100);
+    for (int i = 0; i < 100; ++i) matrix[i] = i % 10;
+
+    vector<double> kernel = {
+        1.0, 0.0, -1.0,
+        2.0, 0.0, -2.0,
+        1.0, 0.0, -1.0
+    };
+
+    // Step 4: Encrypt full matrix
+    Plaintext plain_matrix;
     encoder.encode(matrix, scale, plain_matrix);
-    encoder.encode(kernel, scale, plain_kernel);
-    
     Ciphertext encrypted_matrix;
     encryptor.encrypt(plain_matrix, encrypted_matrix);
-    
-    // Step 5: Homomorphic dot product
-    Plaintext plain_result;
-    Ciphertext encrypted_result;
-    
-    // For each position in the output (8x8 for valid padding)
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            // Calculate the starting index for this convolution position
-            size_t start_idx = i * 10 + j;
-            
-            // Create a mask to zero out non-relevant elements
-            vector<double> mask(100, 0.0);
-            for (int ki = 0; ki < 3; ki++) {
-                for (int kj = 0; kj < 3; kj++) {
-                    mask[start_idx + ki * 10 + kj] = 1.0;
-                }
-            }
-            
-            // Encode and multiply by mask
-            Plaintext plain_mask;
-            encoder.encode(mask, scale, plain_mask);
-            Ciphertext masked_matrix;
-            evaluator.multiply_plain(encrypted_matrix, plain_mask, masked_matrix);
-            evaluator.relinearize_inplace(masked_matrix, relin_keys);
-            evaluator.rescale_to_next_inplace(masked_matrix);
-            
-            // Compute dot product with kernel
-            Plaintext plain_kernel_padded;
-            vector<double> kernel_padded(100, 0.0);
-            for (int ki = 0; ki < 3; ki++) {
-                for (int kj = 0; kj < 3; kj++) {
-                    kernel_padded[start_idx + ki * 10 + kj] = kernel[ki * 3 + kj];
-                }
-            }
-            encoder.encode(kernel_padded, scale, plain_kernel_padded);
-            
-            Ciphertext dot_product;
-            evaluator.multiply_plain(masked_matrix, plain_kernel_padded, dot_product);
-            evaluator.relinearize_inplace(dot_product, relin_keys);
-            evaluator.rescale_to_next_inplace(dot_product);
-            
-            // Sum all elements (dot product)
-            Ciphertext sum_result;
-            evaluator.sum_elements(dot_product, relin_keys, sum_result);
-            
-            // Decrypt and decode
-            decryptor.decrypt(sum_result, plain_result);
-            vector<double> result;
-            encoder.decode(plain_result, result);
-            
-            cout << "Dot product at (" << i << "," << j << "): " << result[0] << endl;
+
+    // Step 5: Build kernel mask for top-left 3x3 region
+    vector<double> kernel_padded(100, 0.0);
+    for (int ki = 0; ki < 3; ki++) {
+        for (int kj = 0; kj < 3; kj++) {
+            kernel_padded[ki * 10 + kj] = kernel[ki * 3 + kj];
         }
     }
-    
+
+    Plaintext plain_kernel;
+    encoder.encode(kernel_padded, scale, plain_kernel);
+
+    // Match parms_id for the plaintext to ciphertext
+    evaluator.mod_switch_to_inplace(plain_kernel, encrypted_matrix.parms_id());
+
+    // Step 6: Homomorphic element-wise multiplication
+    Ciphertext multiplied;
+    evaluator.multiply_plain(encrypted_matrix, plain_kernel, multiplied);
+    evaluator.relinearize_inplace(multiplied, relin_keys);
+    evaluator.rescale_to_next_inplace(multiplied);
+
+    // Step 7: Sum up the 9 involved values using rotate + add
+    Ciphertext sum = multiplied;
+    GaloisKeys gal_keys;
+    keygen.create_galois_keys(gal_keys);
+
+    for (int k = 1; k < 9; k++) {
+        Ciphertext rotated;
+        evaluator.rotate_vector(sum, k, gal_keys, rotated);
+        evaluator.add_inplace(sum, rotated);
+    }
+
+    // Step 8: Decrypt and decode result
+    Plaintext plain_result;
+    decryptor.decrypt(sum, plain_result);
+    vector<double> result;
+    encoder.decode(plain_result, result);
+
+    cout << "Dot product at (0,0): " << result[0] << endl;
     return 0;
 }

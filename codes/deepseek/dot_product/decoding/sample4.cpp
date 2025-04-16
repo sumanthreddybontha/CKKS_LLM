@@ -5,94 +5,86 @@
 using namespace std;
 using namespace seal;
 
+void print_parameters(const SEALContext &context) {
+    auto &context_data = *context.key_context_data();
+    cout << "Encryption parameters:" << endl;
+    cout << "  scheme: CKKS" << endl;
+    cout << "  poly_modulus_degree: " << context_data.parms().poly_modulus_degree() << endl;
+    cout << "  coeff_modulus size: " << context_data.total_coeff_modulus_bit_count() << " bits" << endl;
+    cout << "  scale: " << context_data.parms().coeff_modulus().back().bit_count() << " bits" << endl;
+}
+
 int main() {
-    // Step 1: Parameter setup with larger poly modulus
+    // Step 1: CKKS setup
     EncryptionParameters parms(scheme_type::ckks);
-    size_t poly_modulus_degree = 16384;
+    size_t poly_modulus_degree = 8192;
     parms.set_poly_modulus_degree(poly_modulus_degree);
-    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {60, 40, 40, 60}));
-    
-    auto context = SEALContext::Create(parms);
-    
-    // Step 2: Key generation with Galois keys
+    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 60, 40, 40, 60 }));
+    SEALContext context(parms);
+    print_parameters(context);
+
+    // Step 2: Keys and helpers
     KeyGenerator keygen(context);
-    auto public_key = keygen.public_key();
-    auto secret_key = keygen.secret_key();
-    auto relin_keys = keygen.relin_keys();
-    GaloisKeys gal_keys = keygen.galois_keys(30); // Generate more Galois keys
-    
+    PublicKey public_key;
+    SecretKey secret_key = keygen.secret_key();
+    keygen.create_public_key(public_key);
+    GaloisKeys gal_keys;
+    keygen.create_galois_keys(gal_keys);
     Encryptor encryptor(context, public_key);
-    Evaluator evaluator(context);
     Decryptor decryptor(context, secret_key);
+    Evaluator evaluator(context);
     CKKSEncoder encoder(context);
-    
-    size_t slot_count = encoder.slot_count();
-    cout << "Number of slots: " << slot_count << endl;
-    
-    // Step 3: Data preparation - multiple matrices in parallel
-    int num_matrices = slot_count / 100;
-    cout << "Processing " << num_matrices << " matrices in parallel" << endl;
-    
-    vector<double> matrices(slot_count, 0.0);
-    for (int m = 0; m < num_matrices; m++) {
-        for (int i = 0; i < 100; i++) {
-            matrices[m * 100 + i] = static_cast<double>(rand()) / RAND_MAX;
-        }
-    }
-    
-    vector<double> kernel = {0.25, 0.5, 0.25,
-                             0.5,  1.0, 0.5,
-                             0.25, 0.5, 0.25};
-    
-    // Step 4: Encode and encrypt
+
     double scale = pow(2.0, 40);
-    Plaintext plain_matrices;
-    encoder.encode(matrices, scale, plain_matrices);
-    Ciphertext encrypted_matrices;
-    encryptor.encrypt(plain_matrices, encrypted_matrices);
-    
-    // Step 5: Process all matrices in parallel
-    Ciphertext result;
-    bool first = true;
-    
-    for (int ki = 0; ki < 3; ki++) {
-        for (int kj = 0; kj < 3; kj++) {
-            // Rotate matrices
+
+    // Step 3: Flattened 4x4 matrix
+    vector<double> matrix = {
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        13, 14, 15, 16
+    };
+
+    // Step 4: Encode and encrypt matrix
+    Plaintext plain_matrix;
+    encoder.encode(matrix, scale, plain_matrix);
+    Ciphertext encrypted_matrix;
+    encryptor.encrypt(plain_matrix, encrypted_matrix);
+
+    // Step 5: Row-wise sum using rotation and masking
+    vector<Ciphertext> row_sums;
+    for (int i = 0; i < 4; i++) {
+        vector<double> mask(16, 0.0);
+        for (int j = 0; j < 4; j++) {
+            mask[i * 4 + j] = 1.0;
+        }
+
+        Plaintext plain_mask;
+        encoder.encode(mask, scale, plain_mask);
+        evaluator.mod_switch_to_inplace(plain_mask, encrypted_matrix.parms_id());
+
+        Ciphertext masked;
+        evaluator.multiply_plain(encrypted_matrix, plain_mask, masked);
+        evaluator.rescale_to_next_inplace(masked);
+
+        Ciphertext row_sum = masked;
+        for (int j = 1; j < 4; j++) {
             Ciphertext rotated;
-            evaluator.rotate_vector(encrypted_matrices, ki * 10 + kj, gal_keys, rotated);
-            
-            // Multiply by kernel coefficient
-            Plaintext kernel_pt;
-            vector<double> kernel_values(slot_count, kernel[ki * 3 + kj]);
-            encoder.encode(kernel_values, scale, kernel_pt);
-            
-            evaluator.multiply_plain_inplace(rotated, kernel_pt);
-            evaluator.relinearize_inplace(rotated, relin_keys);
-            evaluator.rescale_to_next_inplace(rotated);
-            
-            if (first) {
-                result = rotated;
-                first = false;
-            } else {
-                evaluator.add_inplace(result, rotated);
-            }
+            evaluator.rotate_vector(row_sum, j, gal_keys, rotated);
+            evaluator.add_inplace(row_sum, rotated);
         }
+
+        row_sums.push_back(row_sum);
     }
-    
-    // Step 6: Decrypt and decode
-    Plaintext plain_result;
-    decryptor.decrypt(result, plain_result);
-    vector<double> decoded_result;
-    encoder.decode(plain_result, decoded_result);
-    
-    // Print first matrix's results
-    cout << "First matrix dot product results (8x8):" << endl;
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            cout << decoded_result[i * 10 + j] << " ";
-        }
-        cout << endl;
+
+    // Step 6: Decrypt and decode results
+    for (int i = 0; i < 4; i++) {
+        Plaintext plain_sum;
+        decryptor.decrypt(row_sums[i], plain_sum);
+        vector<double> result;
+        encoder.decode(plain_sum, result);
+        cout << "Row " << i << " sum: " << result[0] << endl;
     }
-    
+
     return 0;
 }
