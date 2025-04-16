@@ -1,99 +1,86 @@
 #include <iostream>
 #include <vector>
-#include <numeric>
 #include <chrono>
 #include "seal/seal.h"
 
 using namespace std;
 using namespace seal;
 
-void print_matrix(const vector<double> &matrix, size_t rows, size_t cols) {
-    for (size_t i = 0; i < rows; i++) {
-        for (size_t j = 0; j < cols; j++) {
-            cout << matrix[i * cols + j] << "\t";
-        }
-        cout << endl;
-    }
-}
-
-int main() {
-    // Step 1: Parameter setup
-    EncryptionParameters parms(scheme_type::ckks);
+void basic_ckks_matrix_multiplication() {
+    // Step 1: Set up parameters with more appropriate values
+    EncryptionParameters params(scheme_type::ckks);
     size_t poly_modulus_degree = 8192;
-    parms.set_poly_modulus_degree(poly_modulus_degree);
-    vector<int> modulus_bits = {60, 40, 40, 60};
-    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, modulus_bits));
+    params.set_poly_modulus_degree(poly_modulus_degree);
     
-    SEALContext context(parms);
-    // print_parameters(context);
-    cout << endl;
-
-    // Step 2: Key generation
+    // Adjusted coefficient modulus - larger primes for better scale handling
+    params.set_coeff_modulus(CoeffModulus::Create(
+        poly_modulus_degree, 
+        {50, 30, 30, 50}  // More balanced primes
+    ));
+    
+    // Step 2: Create context
+    SEALContext context(params);
+    
+    // Step 3: Generate keys
     KeyGenerator keygen(context);
     auto secret_key = keygen.secret_key();
     PublicKey public_key;
     keygen.create_public_key(public_key);
     RelinKeys relin_keys;
     keygen.create_relin_keys(relin_keys);
-
-    // Step 3: Set up crypto objects
+    GaloisKeys gal_keys;
+    keygen.create_galois_keys(gal_keys);
+    
+    // Step 4: Set up encryptor, evaluator, decryptor
     Encryptor encryptor(context, public_key);
     Evaluator evaluator(context);
     Decryptor decryptor(context, secret_key);
-    CKKSEncoder encoder(context);
     
+    // Step 5: Create encoder
+    CKKSEncoder encoder(context);
     size_t slot_count = encoder.slot_count();
     cout << "Number of slots: " << slot_count << endl;
-
-    // Step 4: Prepare data
-    vector<double> input_matrix(10 * 10);
-    iota(input_matrix.begin(), input_matrix.end(), 1.0); // Fill with 1.0 to 100.0
-
-    vector<double> kernel = {
-        1.0, 0.0, -1.0,
-        2.0, 0.0, -2.0,
-        1.0, 0.0, -1.0
-    };
-
-    cout << "Input matrix (10x10):" << endl;
-    print_matrix(input_matrix, 10, 10);
-    cout << "\nKernel (3x3):" << endl;
-    print_matrix(kernel, 3, 3);
-
-    // Step 5: Encode and encrypt matrix
-    vector<double> padded_matrix(slot_count, 0.0);
-    copy(input_matrix.begin(), input_matrix.end(), padded_matrix.begin());
     
-    double scale = pow(2.0, 40);
-    Plaintext plain_matrix;
-    encoder.encode(padded_matrix, scale, plain_matrix);
+    // Step 6: Prepare input data
+    vector<double> input_matrix(100, 0.0); // 10x10 matrix
+    vector<double> kernel(9, 0.0); // 3x3 kernel
+    
+    // Fill with sample data (scaled down to avoid overflow)
+    for (size_t i = 0; i < 100; i++) {
+        input_matrix[i] = static_cast<double>(i % 10) / 10.0; // Scaled down
+    }
+    for (size_t i = 0; i < 9; i++) {
+        kernel[i] = 0.1; // Smaller kernel values
+    }
+    
+    // Step 7: Encode and encrypt with more reasonable scale
+    double scale = pow(2.0, 30);  // Reduced from 40 to 30
+    Plaintext plain_matrix, plain_kernel;
+    encoder.encode(input_matrix, scale, plain_matrix);
+    encoder.encode(kernel, scale, plain_kernel);
     
     Ciphertext encrypted_matrix;
     encryptor.encrypt(plain_matrix, encrypted_matrix);
-
-    // Step 6: Encode kernel (as plaintext)
-    vector<double> padded_kernel(slot_count, 0.0);
-    copy(kernel.begin(), kernel.end(), padded_kernel.begin());
     
-    Plaintext plain_kernel;
-    encoder.encode(padded_kernel, scale, plain_kernel);
-
-    // Step 7: Perform multiplication - CORRECT APPROACH
-    Ciphertext encrypted_result;
-    evaluator.multiply_plain(encrypted_matrix, plain_kernel, encrypted_result);
-    evaluator.relinearize_inplace(encrypted_result, relin_keys);
-    evaluator.rescale_to_next_inplace(encrypted_result);
-
-    // Step 8: Decrypt and decode
+    // Step 8: Perform multiplication
+    evaluator.multiply_plain_inplace(encrypted_matrix, plain_kernel);
+    evaluator.rescale_to_next_inplace(encrypted_matrix);
+    
+    // Step 9: Decrypt and decode
     Plaintext plain_result;
-    decryptor.decrypt(encrypted_result, plain_result);
-    
     vector<double> result;
+    decryptor.decrypt(encrypted_matrix, plain_result);
     encoder.decode(plain_result, result);
+    
+    // Print first few results
+    cout << "First 10 result values: ";
+    for (size_t i = 0; i < 10; i++) {
+        cout << result[i] << " ";
+    }
+    cout << endl;
+}
 
-    vector<double> final_result(result.begin(), result.begin() + 100);
-    cout << "\nResult (first 10x10 elements):" << endl;
-    print_matrix(final_result, 10, 10);
-
+int main() {
+    basic_ckks_matrix_multiplication();
     return 0;
 }
