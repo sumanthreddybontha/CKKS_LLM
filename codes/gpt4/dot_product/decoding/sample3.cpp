@@ -6,67 +6,93 @@
 using namespace std;
 using namespace seal;
 
+void print_parameters(const SEALContext &context)
+{
+    auto &parms = context.key_context_data()->parms();
+    cout << "Encryption parameters:" << endl;
+    cout << "  Scheme: CKKS" << endl;
+    cout << "  Poly modulus degree: " << parms.poly_modulus_degree() << endl;
+    cout << "  Coeff modulus size: " 
+         << context.key_context_data()->total_coeff_modulus_bit_count() << " bits" << endl;
+}
+
 int main() {
-    size_t poly_modulus_degree = 16384;
+    size_t poly_modulus_degree = 8192;
     EncryptionParameters parms(scheme_type::ckks);
     parms.set_poly_modulus_degree(poly_modulus_degree);
-    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {60, 40, 40, 40, 60}));
+    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {60, 40, 40, 60}));
+    
+    SEALContext context(parms);
+    print_parameters(context);
+    cout << endl;
 
-    auto context = SEALContext::Create(parms);
     KeyGenerator keygen(context);
-    auto public_key = keygen.public_key();
-    auto secret_key = keygen.secret_key();
-    auto relin_keys = keygen.relin_keys();
-    auto gal_keys = keygen.galois_keys();
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
+    SecretKey secret_key = keygen.secret_key();
+
+    RelinKeys relin_keys;
+    keygen.create_relin_keys(relin_keys);
+
+    vector<int> steps;
+    for (int i = 0; i < 100; i++) 
+        steps.push_back(i);
+    GaloisKeys gal_keys;
+    keygen.create_galois_keys(steps, gal_keys);
 
     Encryptor encryptor(context, public_key);
     Decryptor decryptor(context, secret_key);
     Evaluator evaluator(context);
     CKKSEncoder encoder(context);
-
+    
+    const int rows = 10, cols = 10, kernel_size = 3;
     double scale = pow(2.0, 40);
-    const size_t N = 100;
+    vector<double> matrix(rows * cols, 1.0);
+    vector<double> kernel(kernel_size * kernel_size, 0.5);
 
-    vector<double> matrix(N, 2.0);
-    vector<double> kernel = {
-        0.1, 0.2, 0.3,
-        0.4, 0.5, 0.6,
-        0.7, 0.8, 0.9
+    Plaintext plain_matrix;
+    encoder.encode(matrix, scale, plain_matrix);
+    Ciphertext encrypted_matrix;
+    encryptor.encrypt(plain_matrix, encrypted_matrix);
+
+    // Lambda function to compute the convolution dot product at (i,j)
+    auto compute_window = [&](int i, int j) -> Ciphertext {
+        Ciphertext result;
+        bool first = true;
+        for (int ki = 0; ki < kernel_size; ++ki)
+        {
+            for (int kj = 0; kj < kernel_size; ++kj)
+            {
+                int shift = (i + ki) * cols + (j + kj);
+                Ciphertext rotated;
+                evaluator.rotate_vector(encrypted_matrix, shift, gal_keys, rotated);
+                Plaintext plain_weight;
+                encoder.encode(kernel[ki * kernel_size + kj], scale, plain_weight);
+                evaluator.multiply_plain_inplace(rotated, plain_weight);
+                evaluator.rescale_to_next_inplace(rotated);
+                if (first)
+                {
+                    result = rotated;
+                    first = false;
+                }
+                else
+                {
+                    evaluator.mod_switch_to_inplace(result, rotated.parms_id());
+                    evaluator.add_inplace(result, rotated);
+                }
+            }
+        }
+        return result;
     };
 
-    Plaintext plain_matrix, plain_kernel;
-    encoder.encode(matrix, scale, plain_matrix);
-    encoder.encode(kernel, scale, plain_kernel);
-
-    Ciphertext enc_matrix;
-    encryptor.encrypt(plain_matrix, enc_matrix);
-
-    Ciphertext result;
-    bool first = true;
-
-    for (int i = 0; i < 9; ++i) {
-        Ciphertext rotated;
-        evaluator.rotate_vector(enc_matrix, i, gal_keys, rotated);
-
-        Plaintext weight;
-        encoder.encode(kernel[i], scale, weight);
-        evaluator.multiply_plain_inplace(rotated, weight);
-        evaluator.rescale_to_next_inplace(rotated);
-
-        if (first) {
-            result = rotated;
-            first = false;
-        } else {
-            evaluator.add_inplace(result, rotated);
-        }
-    }
+    // Compute the result for the window at (0,0)
+    Ciphertext conv_result = compute_window(0, 0);
 
     Plaintext plain_result;
-    decryptor.decrypt(result, plain_result);
+    vector<double> result_vector;
+    decryptor.decrypt(conv_result, plain_result);
+    encoder.decode(plain_result, result_vector);
+    cout << "Variant 2 - First 3x3 Dot Product Result: " << result_vector[0] << endl;
 
-    vector<double> output;
-    encoder.decode(plain_result, output);
-
-    cout << "Dot Product Output (first value): " << output[0] << endl;
     return 0;
 }
