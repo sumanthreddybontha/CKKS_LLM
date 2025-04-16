@@ -1,0 +1,101 @@
+LLM,Task,Technique,Filename,Compiles,Runs,Output,CrystalBLEU
+gpt4,addition,decoding,sample1.cpp,YES,YES,Decrypted result: 4 ,Score: 16.3
+gpt4,addition,decoding,sample2.cpp,YES,YES,Decrypted result: 4 ,Score: 16.3
+gpt4,addition,decoding,sample3.cpp,YES,YES,Sum: 13 ,Score: 14.01
+gpt4,addition,decoding,sample4.cpp,YES,YES,Sum: 13 ,Score: 14.01
+gpt4,addition,decoding,sample5.cpp,NO,NO,1 error generated.,Score: 16.79
+gpt4,addition,prompting,sample1.cpp,YES,YES,✅ SEAL context created. ✅ Encryption complete. ✅ Homomorphic addition done. ✅ Decrypted result: 6 ,Score: 25.43
+gpt4,addition,prompting,sample2.cpp,YES,YES,Decrypted result: 15 ,Score: 21.71
+gpt4,addition,prompting,sample3.cpp,YES,YES,Decrypted result: 3.3 ,Score: 20.88
+gpt4,addition,prompting,sample4.cpp,YES,YES,Decrypted result: 100 ,Score: 20.88
+gpt4,addition,prompting,sample5.cpp,YES,YES,Decrypted result: 10 ,Score: 20.88
+gpt4,addition,rag,sample1.cpp,YES,YES,Decrypted result: 4 ,Score: 25.66
+gpt4,addition,rag,sample2.cpp,NO,NO,2 warnings and 1 error generated.,Score: 18.57
+gpt4,addition,rag,sample3.cpp,YES,YES,CKKS addition: 3.3 ,Score: 19.29
+gpt4,addition,rag,sample4.cpp,YES,YES,Decoded RAG Sum: 123 ,Score: 22.06
+gpt4,addition,rag,sample5.cpp,YES,YES,Decoded RAG Sum: 123 ,Score: 22.06
+gpt4,addition,self_improvement,sample1.cpp,YES,YES,Decrypted sum: 40 60 -9.04621e-10 1.50715e-09 4.54384e-09 ... (truncated) ,Score: 20.47
+gpt4,addition,self_improvement,sample2.cpp,YES,YES,Result: 12 ,Score: 17.14
+gpt4,addition,self_improvement,sample3.cpp,YES,YES,Sum: 6 ⏱️ Time taken: 0.0426517s ,Score: 15.87
+gpt4,addition,self_improvement,sample4.cpp,YES,YES,Encrypted sum: 9.9 ,Score: 14.72
+gpt4,addition,self_improvement,sample5.cpp,YES,YES,[🔐] Initializing SEAL context... [🛠️ ] Generating keys... [📦] Encoding and encrypting inputs... [➕] Evaluating addition.,Score: 13.07
+gpt4,convolution,decoding,sample1.cpp,YES,YES,Decrypted convolution output: 0.5 2 -3 -1.33367e-17 -7.75993e-18 5.32781e-18 5.11152e-18 8.85604e-18 -1.24856e-18 -3.301,Score: NA
+gpt4,convolution,decoding,sample2.cpp,YES,YES,Decrypted convolution output: 0.2 1 0.9 -3.32456e-18 -4.1585e-19 -3.48173e-20 -1.75011e-19 -6.73291e-19 7.15202e-18 -2.4,Score: NA
+gpt4,convolution,decoding,sample3.cpp,YES,YES,Averaged convolution output: 2 4 6 1.37031e-17 1.79597e-18 -6.59934e-18 -1.38856e-17 1.36753e-17 -1.47795e-18 1.26193e-1,Score: NA
+gpt4,convolution,decoding,sample4.cpp,YES,YES,Filtered convolution output: -0.5 -3.57959e-10 1 -8.83955e-19 6.11988e-19 -1.34485e-18 -2.99565e-19 1.59783e-18 -7.82809,Score: NA
+gpt4,convolution,decoding,sample5.cpp,YES,YES,One-hot convolution result: 9.36192e-11 10 3.94134e-09 -1.80957e-17 -1.79969e-17 2.22065e-17 -1.27885e-19 -1.86085e-17 -,Score: NA
+gpt4,convolution,prompting,sample1.cpp,YES,YES,Decrypted result: 10 ,Score: NA
+gpt4,convolution,prompting,sample2.cpp,YES,YES,Decrypted result: 10 ,Score: NA
+gpt4,convolution,prompting,sample3.cpp,YES,YES,Decrypted result: 7 ,Score: NA
+gpt4,convolution,prompting,sample4.cpp,YES,YES,Decrypted result: 9 ,Score: NA
+gpt4,convolution,prompting,sample5.cpp,YES,YES,Decrypted result: 10 | Error: 2.66393e-10 ,Score: NA
+gpt4,convolution,rag,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,convolution,rag,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,convolution,rag,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,convolution,rag,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,convolution,rag,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,convolution,self_improvement,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,convolution,self_improvement,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,convolution,self_improvement,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,convolution,self_improvement,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,convolution,self_improvement,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,dot_product,decoding,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,decoding,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,decoding,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,decoding,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,decoding,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,prompting,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,prompting,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,prompting,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,prompting,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,prompting,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,rag,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,rag,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,rag,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,rag,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,rag,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,self_improvement,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,self_improvement,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,self_improvement,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,self_improvement,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,dot_product,self_improvement,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,matrix_multiplication,decoding,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,decoding,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,decoding,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,decoding,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,decoding,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,prompting,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,prompting,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,prompting,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,prompting,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,prompting,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,rag,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,rag,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,rag,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,rag,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,rag,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,self_improvement,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,self_improvement,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,self_improvement,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,self_improvement,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,matrix_multiplication,self_improvement,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: NA
+gpt4,multiplication,decoding,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,decoding,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,decoding,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,decoding,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,decoding,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,prompting,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,prompting,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,prompting,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,prompting,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,prompting,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,rag,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,rag,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,rag,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,rag,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,rag,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,self_improvement,sample1.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,self_improvement,sample2.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,self_improvement,sample3.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,self_improvement,sample4.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0
+gpt4,multiplication,self_improvement,sample5.cpp,NO,NO,clang: error: linker command failed with exit code 1 (use -v to see invocation),Score: 0.0

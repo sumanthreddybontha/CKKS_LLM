@@ -1,0 +1,6 @@
+Command: g++ "codes/gpt4/multiplication/self_improvement/sample3.cpp" -std=c++17 ...
+Undefined symbols for architecture arm64:
+  "_main", referenced from:
+     implicit entry/start for main executable
+ld: symbol(s) not found for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
