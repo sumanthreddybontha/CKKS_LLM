@@ -33,7 +33,7 @@ int main() {
     Evaluator evaluator(context);
     CKKSEncoder encoder(context);
 
-    double scale = pow(2.0, 40);
+    double scale = pow(2.0, 30);
 
     // Step 3: Input vectors
     vector<double> vec1 = { 1.0, 2.0, 3.0, 4.0 };
