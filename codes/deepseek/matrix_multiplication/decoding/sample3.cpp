@@ -43,6 +43,7 @@ vector<vector<double>> matrix_multiply_encrypted(
     Encryptor &encryptor,
     Evaluator &evaluator,
     Decryptor &decryptor,
+    GaloisKeys &galois_keys,
     RelinKeys &relin_keys,
     double scale) {
     
@@ -108,7 +109,7 @@ int main() {
     
     // Create context
     SEALContext context(parms);
-    print_parameters(context);
+    // print_parameters(context);
     
     // Generate keys
     KeyGenerator keygen(context);
@@ -157,7 +158,7 @@ int main() {
     
     auto encrypted_result = matrix_multiply_encrypted(
         a, b, a_rows, a_cols, b_cols,
-        encoder, encryptor, evaluator, decryptor, relin_keys, galois_keys, scale);
+        encoder, encryptor, evaluator, decryptor, galois_keys, relin_keys, scale);
     
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);

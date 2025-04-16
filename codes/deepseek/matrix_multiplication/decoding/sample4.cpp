@@ -52,7 +52,7 @@ int main() {
     
     // Create the SEAL context
     SEALContext context(parms);
-    print_parameters(context);
+    // print_parameters(context);
     cout << endl;
     
     // Step 2: Generate keys

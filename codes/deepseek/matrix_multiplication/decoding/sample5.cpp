@@ -44,6 +44,7 @@ vector<vector<double>> matrix_multiply_encrypted(
     Evaluator &evaluator,
     Decryptor &decryptor,
     RelinKeys &relin_keys,
+    GaloisKeys &galois_keys,
     double scale) {
     
     size_t slot_count = encoder.slot_count();
@@ -108,7 +109,7 @@ int main() {
     
     // Create context
     SEALContext context(parms);
-    print_parameters(context);
+    // print_parameters(context);
     
     // Generate keys
     KeyGenerator keygen(context);
