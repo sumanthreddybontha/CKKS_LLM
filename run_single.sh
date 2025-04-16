@@ -11,11 +11,11 @@ FILENAME=$(basename -- "$FILE")
 BINARY="/tmp/${FILENAME%.cpp}"
 
 # === CONFIGURATION ===
-SEAL_DIR="$HOME/Desktop/CKKS_LLM/SEAL"
+SEAL_DIR="$HOME/SEAL"
 SEAL_INCLUDE_DIR="$SEAL_DIR/native/src"
 SEAL_CONFIG_INCLUDE="$SEAL_DIR/build/native/src"
 SEAL_GSL_INCLUDE="$HOME/GSL/include"
-SEAL_LIB="$SEAL_DIR/build/lib/libseal-4.1.a"
+SEAL_LIB="$SEAL_DIR/build/lib/libseal.a"
 
 # === COMPILATION ===
 echo "🔧 Compiling: $FILE"

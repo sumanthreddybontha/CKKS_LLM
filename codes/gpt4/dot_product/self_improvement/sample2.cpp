@@ -1,66 +1,52 @@
-// Version 2
+// one encrypted, one plaintext
 #include "seal/seal.h"
 #include <iostream>
 #include <vector>
-#include <random>
+#include <cmath>
 
 using namespace std;
 using namespace seal;
 
 int main() {
-    size_t poly_modulus_degree = 8192;
-    double scale = pow(2.0, 30);
     EncryptionParameters parms(scheme_type::ckks);
-    parms.set_poly_modulus_degree(poly_modulus_degree);
-    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {60, 30, 30, 60}));
+    parms.set_poly_modulus_degree(8192);
+    parms.set_coeff_modulus(CoeffModulus::Create(8192, {60, 40, 40, 60}));
     SEALContext context(parms);
 
     KeyGenerator keygen(context);
-    auto public_key = keygen.public_key();
-    auto secret_key = keygen.secret_key();
-    auto relin_keys = keygen.relin_keys_local();
+    PublicKey public_key; keygen.create_public_key(public_key);
+    SecretKey secret_key = keygen.secret_key();
+    GaloisKeys gal_keys; keygen.create_galois_keys(gal_keys);
 
     Encryptor encryptor(context, public_key);
     Decryptor decryptor(context, secret_key);
     Evaluator evaluator(context);
     CKKSEncoder encoder(context);
+    double scale = pow(2.0, 40);
 
-    // Random Matrix and Kernel
-    default_random_engine gen;
-    uniform_real_distribution<double> dist(0.0, 5.0);
-    vector<double> matrix(100), kernel(9);
-    for (auto &x : matrix) x = dist(gen);
-    for (auto &k : kernel) k = dist(gen);
+    vector<double> vec_enc = {0.5, 1.0, 1.5, 2.0};
+    vector<double> vec_plain = {2.0, 1.5, 1.0, 0.5};
 
-    Plaintext plain_kernel;
-    encoder.encode(kernel, scale, plain_kernel);
+    Plaintext pt_enc, pt_plain;
+    encoder.encode(vec_enc, scale, pt_enc);
+    encoder.encode(vec_plain, scale, pt_plain);
 
-    vector<double> output;
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            vector<double> patch;
-            for (int ki = 0; ki < 3; ++ki)
-                for (int kj = 0; kj < 3; ++kj)
-                    patch.push_back(matrix[(i + ki) * 10 + (j + kj)]);
+    Ciphertext ct_enc;
+    encryptor.encrypt(pt_enc, ct_enc);
 
-            Plaintext pt;
-            encoder.encode(patch, scale, pt);
-            Ciphertext ct;
-            encryptor.encrypt(pt, ct);
-            evaluator.multiply_plain_inplace(ct, plain_kernel);
-            evaluator.relinearize_inplace(ct, relin_keys);
-            evaluator.rescale_to_next_inplace(ct);
+    evaluator.multiply_plain_inplace(ct_enc, pt_plain);
+    evaluator.rescale_to_next_inplace(ct_enc);
 
-            Plaintext sum_result;
-            decryptor.decrypt(ct, sum_result);
-            vector<double> decoded;
-            encoder.decode(sum_result, decoded);
-            double sum = 0;
-            for (double d : decoded) sum += d;
-            output.push_back(sum);
-        }
+    for (size_t i = 1; i < vec_enc.size(); i <<= 1) {
+        Ciphertext rotated;
+        evaluator.rotate_vector(ct_enc, i, gal_keys, rotated);
+        evaluator.add_inplace(ct_enc, rotated);
     }
 
-    cout << "Output[0]: " << output[0] << endl;
+    Plaintext result_plain;
+    vector<double> result;
+    decryptor.decrypt(ct_enc, result_plain);
+    encoder.decode(result_plain, result);
+    cout << "Dot product (enc • plain): " << result[0] << endl;
     return 0;
 }

@@ -1,201 +1,201 @@
 LLM,Task,Technique,Filename,Compiles,Runs,Output
-deepseek,addition,decoding,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,decoding,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,decoding,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,decoding,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,decoding,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,prompting,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,prompting,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,prompting,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,prompting,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,prompting,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,rag,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,rag,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,rag,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,rag,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,rag,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,self_improvement,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,self_improvement,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,self_improvement,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,self_improvement,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,addition,self_improvement,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,decoding,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,decoding,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,decoding,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,decoding,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,decoding,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,prompting,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,prompting,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,prompting,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,prompting,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,prompting,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,rag,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,rag,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,rag,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,rag,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,rag,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,self_improvement,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,self_improvement,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,self_improvement,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,self_improvement,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,convolution,self_improvement,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,decoding,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,decoding,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,decoding,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,decoding,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,decoding,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,prompting,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,prompting,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,prompting,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,prompting,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,prompting,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,rag,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,rag,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,rag,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,rag,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,rag,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,self_improvement,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,self_improvement,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,self_improvement,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,self_improvement,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,dot_product,self_improvement,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,decoding,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,decoding,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,decoding,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,decoding,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,decoding,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,prompting,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,prompting,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,prompting,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,prompting,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,prompting,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,rag,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,rag,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,rag,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,rag,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,rag,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,self_improvement,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,self_improvement,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,self_improvement,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,self_improvement,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,matrix_multiplication,self_improvement,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,decoding,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,decoding,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,decoding,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,decoding,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,decoding,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,prompting,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,prompting,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,prompting,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,prompting,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,prompting,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,rag,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,rag,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,rag,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,rag,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,rag,sample5.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,self_improvement,sample1.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,self_improvement,sample2.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,self_improvement,sample3.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,self_improvement,sample4.cpp,NO,NO,COMPILATION_FAILED
-deepseek,multiplication,self_improvement,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,decoding,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,decoding,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,decoding,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,decoding,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,decoding,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,prompting,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,prompting,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,prompting,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,prompting,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,prompting,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,rag,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,rag,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,rag,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,rag,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,rag,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,self_improvement,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,self_improvement,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,self_improvement,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,self_improvement,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,addition,self_improvement,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,decoding,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,decoding,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,decoding,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,decoding,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,decoding,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,prompting,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,prompting,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,prompting,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,prompting,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,prompting,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,rag,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,rag,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,rag,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,rag,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,rag,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,self_improvement,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,self_improvement,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,self_improvement,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,self_improvement,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,convolution,self_improvement,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,decoding,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,decoding,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,decoding,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,decoding,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,decoding,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,prompting,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,prompting,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,prompting,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,prompting,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,prompting,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,rag,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,rag,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,rag,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,rag,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,rag,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,self_improvement,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,self_improvement,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,self_improvement,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,self_improvement,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,dot_product,self_improvement,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,decoding,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,decoding,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,decoding,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,decoding,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,decoding,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,prompting,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,prompting,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,prompting,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,prompting,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,prompting,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,rag,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,rag,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,rag,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,rag,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,rag,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,self_improvement,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,self_improvement,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,self_improvement,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,self_improvement,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,matrix_multiplication,self_improvement,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,decoding,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,decoding,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,decoding,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,decoding,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,decoding,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,prompting,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,prompting,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,prompting,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,prompting,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,prompting,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,rag,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,rag,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,rag,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,rag,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,rag,sample5.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,self_improvement,sample1.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,self_improvement,sample2.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,self_improvement,sample3.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,self_improvement,sample4.cpp,NO,NO,COMPILATION_FAILED
-gpt4,multiplication,self_improvement,sample5.cpp,NO,NO,COMPILATION_FAILED
+deepseek,addition,decoding,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,decoding,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,decoding,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,decoding,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,decoding,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,prompting,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,prompting,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,prompting,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,prompting,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,prompting,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,rag,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,rag,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,rag,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,rag,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,rag,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,self_improvement,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,self_improvement,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,self_improvement,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,self_improvement,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,addition,self_improvement,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,decoding,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,decoding,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,decoding,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,decoding,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,decoding,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,prompting,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,prompting,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,prompting,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,prompting,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,prompting,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,rag,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,rag,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,rag,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,rag,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,rag,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,self_improvement,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,self_improvement,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,self_improvement,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,self_improvement,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,convolution,self_improvement,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,dot_product,decoding,sample1.cpp,NO,NO,"4 errors generated."
+deepseek,dot_product,decoding,sample2.cpp,NO,NO,"4 errors generated."
+deepseek,dot_product,decoding,sample3.cpp,NO,NO,"4 errors generated."
+deepseek,dot_product,decoding,sample4.cpp,NO,NO,"4 errors generated."
+deepseek,dot_product,decoding,sample5.cpp,NO,NO,"4 errors generated."
+deepseek,dot_product,prompting,sample1.cpp,YES,YES,"CKKS Dot Product Example using Microsoft SEAL Parameter set: scheme: CKKS poly_modulus_degree: 8192 coeff_modulus size: "
+deepseek,dot_product,prompting,sample2.cpp,YES,YES,"Dot product result: 40 "
+deepseek,dot_product,prompting,sample3.cpp,YES,NO,"libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch"
+deepseek,dot_product,prompting,sample4.cpp,YES,NO,"Could not open vectors.txt"
+deepseek,dot_product,prompting,sample5.cpp,YES,YES,"Secure dot product result: 40 "
+deepseek,dot_product,rag,sample1.cpp,YES,YES,"RAG-optimized Result: 25.51 (Expected: 25.51) Absolute Error: 6.18252e-09 "
+deepseek,dot_product,rag,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,dot_product,rag,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,dot_product,rag,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,dot_product,rag,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,dot_product,self_improvement,sample1.cpp,NO,NO,"3 warnings and 4 errors generated."
+deepseek,dot_product,self_improvement,sample2.cpp,NO,NO,"1 error generated."
+deepseek,dot_product,self_improvement,sample3.cpp,NO,NO,"2 warnings and 1 error generated."
+deepseek,dot_product,self_improvement,sample4.cpp,YES,NO,"libc++abi: terminating due to uncaught exception of type std::length_error: vector"
+deepseek,dot_product,self_improvement,sample5.cpp,NO,NO,"2 warnings and 1 error generated."
+deepseek,matrix_multiplication,decoding,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,decoding,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,decoding,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,decoding,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,decoding,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,prompting,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,prompting,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,prompting,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,prompting,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,prompting,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,rag,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,rag,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,rag,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,rag,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,rag,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,self_improvement,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,self_improvement,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,self_improvement,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,self_improvement,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,matrix_multiplication,self_improvement,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,decoding,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,decoding,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,decoding,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,decoding,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,decoding,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,prompting,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,prompting,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,prompting,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,prompting,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,prompting,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,rag,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,rag,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,rag,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,rag,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,rag,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,self_improvement,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,self_improvement,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,self_improvement,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,self_improvement,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+deepseek,multiplication,self_improvement,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,addition,decoding,sample1.cpp,YES,YES,"Decrypted result: 4 "
+gpt4,addition,decoding,sample2.cpp,YES,YES,"Decrypted result: 4 "
+gpt4,addition,decoding,sample3.cpp,YES,YES,"Sum: 13 "
+gpt4,addition,decoding,sample4.cpp,YES,YES,"Sum: 13 "
+gpt4,addition,decoding,sample5.cpp,NO,NO,"1 error generated."
+gpt4,addition,prompting,sample1.cpp,YES,YES,"✅ SEAL context created. ✅ Encryption complete. ✅ Homomorphic addition done. ✅ Decrypted result: 6 "
+gpt4,addition,prompting,sample2.cpp,YES,YES,"Decrypted result: 15 "
+gpt4,addition,prompting,sample3.cpp,YES,YES,"Decrypted result: 3.3 "
+gpt4,addition,prompting,sample4.cpp,YES,YES,"Decrypted result: 100 "
+gpt4,addition,prompting,sample5.cpp,YES,YES,"Decrypted result: 10 "
+gpt4,addition,rag,sample1.cpp,YES,YES,"Decrypted result: 4 "
+gpt4,addition,rag,sample2.cpp,NO,NO,"2 warnings and 1 error generated."
+gpt4,addition,rag,sample3.cpp,YES,YES,"CKKS addition: 3.3 "
+gpt4,addition,rag,sample4.cpp,YES,YES,"Decoded RAG Sum: 123 "
+gpt4,addition,rag,sample5.cpp,YES,YES,"Decoded RAG Sum: 123 "
+gpt4,addition,self_improvement,sample1.cpp,YES,YES,"Decrypted sum: 40 60 -6.29655e-11 -6.01852e-10 -2.55826e-10 ... (truncated) "
+gpt4,addition,self_improvement,sample2.cpp,YES,YES,"Result: 12 "
+gpt4,addition,self_improvement,sample3.cpp,YES,YES,"Sum: 6 ⏱️ Time taken: 0.0260754s "
+gpt4,addition,self_improvement,sample4.cpp,YES,YES,"Encrypted sum: 9.9 "
+gpt4,addition,self_improvement,sample5.cpp,YES,YES,"[🔐] Initializing SEAL context... [🛠️ ] Generating keys... [📦] Encoding and encrypting inputs... [➕] Evaluating addition."
+gpt4,convolution,decoding,sample1.cpp,YES,YES,"Decrypted convolution output: 0.5 2 -3 -9.31935e-18 -4.43567e-18 -6.74509e-18 -2.79756e-18 -2.36792e-18 5.24247e-18 -2.8"
+gpt4,convolution,decoding,sample2.cpp,YES,YES,"Decrypted convolution output: 0.2 1 0.9 8.82021e-19 -2.59719e-18 -1.78327e-18 3.74976e-18 5.16795e-19 -2.31422e-17 -1.64"
+gpt4,convolution,decoding,sample3.cpp,YES,YES,"Averaged convolution output: 2 4 6 2.32037e-17 1.8025e-17 -8.99164e-19 -1.68324e-17 4.23839e-18 6.80659e-18 -1.82078e-17"
+gpt4,convolution,decoding,sample4.cpp,YES,YES,"Filtered convolution output: -0.5 -2.33224e-11 1 -5.41501e-19 1.28765e-17 -7.00976e-19 -3.79208e-18 -9.31039e-20 -2.1363"
+gpt4,convolution,decoding,sample5.cpp,YES,YES,"One-hot convolution result: -4.93055e-09 10 -1.74023e-09 -3.08535e-17 -9.80753e-18 3.56224e-17 -1.68706e-18 2.05368e-17 "
+gpt4,convolution,prompting,sample1.cpp,YES,YES,"Decrypted result: 10 "
+gpt4,convolution,prompting,sample2.cpp,YES,YES,"Decrypted result: 10 "
+gpt4,convolution,prompting,sample3.cpp,YES,YES,"Decrypted result: 7 "
+gpt4,convolution,prompting,sample4.cpp,YES,YES,"Decrypted result: 9 "
+gpt4,convolution,prompting,sample5.cpp,YES,YES,"Decrypted result: 10 | Error: 1.20255e-09 "
+gpt4,convolution,rag,sample1.cpp,YES,YES," Encrypted convolution result (approximate): 4 14 20 21 -6.37242e-10 2.56817e-09 5.40132e-09 -1.11186e-09 -3.52574e-09 -"
+gpt4,convolution,rag,sample2.cpp,YES,YES,"Convolution result (5-point): 1.1 2 3 3.4 3.1 1.4 0.5 7.98546e-10 -2.36993e-09 -8.48642e-10 -5.85159e-10 -1.05385e-09 -1"
+gpt4,convolution,rag,sample3.cpp,YES,YES,"Result: 3.2 5.2 2.4 -2.02324e-08 -2.01316e-09 2.41126e-09 1.30369e-08 -5.30239e-10 2.14919e-09 -1.55234e-10 -1.00361e-09"
+gpt4,convolution,rag,sample4.cpp,YES,YES,"Rotated output: -9.54584e-07 7.29963e-08 4.91542e-08 1.78368e-08 1.14421e-08 1.09402e-09 2.30305e-09 -1.36456e-08 -4.180"
+gpt4,convolution,rag,sample5.cpp,YES,YES,"Edge-detection style result: 3.56136e-07 2.20275e-10 20 -15 -2.91069e-09 1.79628e-08 -7.35714e-09 -3.09062e-09 -8.46583e"
+gpt4,convolution,self_improvement,sample1.cpp,YES,YES,"Self-improvement convolution result: 3.3 6.3 5.7 1.8 2.76608e-10 1.65934e-11 -3.72448e-09 3.91687e-10 4.1427e-10 6.9451e"
+gpt4,convolution,self_improvement,sample2.cpp,YES,YES,"Smoothed output: 1 1.5 1 0.25 -2.39927e-09 4.15213e-09 1.55275e-09 2.16253e-09 3.57442e-09 1.12841e-09 8.56155e-10 -4.53"
+gpt4,convolution,self_improvement,sample3.cpp,YES,YES,"Normalized convolution output: 4 6 4 1 -1.7524e-10 -7.07247e-11 -1.1772e-09 1.92693e-09 1.4647e-09 1.50956e-10 -7.90291e"
+gpt4,convolution,self_improvement,sample4.cpp,YES,YES,"Identity (center-only) output: 4 8 12 2.59504e-09 -3.37603e-10 -1.46207e-09 1.95351e-09 -4.72795e-10 -3.47106e-10 4.2665"
+gpt4,convolution,self_improvement,sample5.cpp,YES,YES,"Cached rotation output: 5 8.6 4.7 2.2 9.58252e-10 2.73174e-09 -8.78081e-09 2.58191e-09 -3.43361e-09 -5.91033e-09 -9.2601"
+gpt4,dot_product,decoding,sample1.cpp,YES,YES," First 3x3 Dot Product Result: 4.5 "
+gpt4,dot_product,decoding,sample2.cpp,NO,NO,"4 errors generated."
+gpt4,dot_product,decoding,sample3.cpp,NO,NO,"4 errors generated."
+gpt4,dot_product,decoding,sample4.cpp,NO,NO,"4 errors generated."
+gpt4,dot_product,decoding,sample5.cpp,NO,NO,"4 errors generated."
+gpt4,dot_product,prompting,sample1.cpp,YES,YES,"Encrypted dot product (approximate): 77 "
+gpt4,dot_product,prompting,sample2.cpp,YES,YES,"Dot product (approximate): 120 "
+gpt4,dot_product,prompting,sample3.cpp,YES,YES,"Dot product (approximate): 27.5 "
+gpt4,dot_product,prompting,sample4.cpp,YES,NO,"libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch"
+gpt4,dot_product,prompting,sample5.cpp,YES,YES,"Dot product (approximate): 70 "
+gpt4,dot_product,rag,sample1.cpp,YES,YES," 🔢 Homomorphic Dot Product (approx): 6.85 "
+gpt4,dot_product,rag,sample2.cpp,YES,YES,"Dot product (enc query × plain doc): 2.59 "
+gpt4,dot_product,rag,sample3.cpp,YES,NO,"libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch"
+gpt4,dot_product,rag,sample4.cpp,YES,YES,"Chunked dot product result: 1.37 "
+gpt4,dot_product,rag,sample5.cpp,YES,YES,"Dot product (add_many): 2.56 "
+gpt4,dot_product,self_improvement,sample1.cpp,YES,YES,"Dot product (v1 • v2): 11.86 "
+gpt4,dot_product,self_improvement,sample2.cpp,YES,YES,"Dot product (enc • plain): 5 "
+gpt4,dot_product,self_improvement,sample3.cpp,YES,NO,"libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch"
+gpt4,dot_product,self_improvement,sample4.cpp,YES,YES,"Dot product (add_many): 7 "
+gpt4,dot_product,self_improvement,sample5.cpp,YES,YES,"Approximate dot product result: 10.61 "
+gpt4,matrix_multiplication,decoding,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,decoding,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,decoding,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,decoding,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,decoding,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,prompting,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,prompting,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,prompting,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,prompting,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,prompting,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,rag,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,rag,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,rag,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,rag,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,rag,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,self_improvement,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,self_improvement,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,self_improvement,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,self_improvement,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,matrix_multiplication,self_improvement,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,decoding,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,decoding,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,decoding,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,decoding,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,decoding,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,prompting,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,prompting,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,prompting,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,prompting,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,prompting,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,rag,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,rag,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,rag,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,rag,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,rag,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,self_improvement,sample1.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,self_improvement,sample2.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,self_improvement,sample3.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,self_improvement,sample4.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"
+gpt4,multiplication,self_improvement,sample5.cpp,NO,NO,"clang: error: linker command failed with exit code 1 (use -v to see invocation)"

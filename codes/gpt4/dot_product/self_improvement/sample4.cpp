@@ -1,60 +1,61 @@
-// Version 4
+// sum using add_many
 #include "seal/seal.h"
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 using namespace seal;
 
 int main() {
     EncryptionParameters parms(scheme_type::ckks);
-    parms.set_poly_modulus_degree(16384);
-    parms.set_coeff_modulus(CoeffModulus::Create(16384, {60, 40, 40, 60}));
-    double scale = pow(2.0, 40);
+    parms.set_poly_modulus_degree(8192);
+    parms.set_coeff_modulus(CoeffModulus::Create(8192, {60, 40, 40, 60}));
     SEALContext context(parms);
 
     KeyGenerator keygen(context);
-    auto public_key = keygen.public_key();
-    auto secret_key = keygen.secret_key();
-    auto relin_keys = keygen.relin_keys();
+    PublicKey public_key; keygen.create_public_key(public_key);
+    SecretKey secret_key = keygen.secret_key();
+    RelinKeys relin_keys; keygen.create_relin_keys(relin_keys);
+    GaloisKeys gal_keys; keygen.create_galois_keys(gal_keys);
 
     Encryptor encryptor(context, public_key);
-    Evaluator evaluator(context);
     Decryptor decryptor(context, secret_key);
+    Evaluator evaluator(context);
     CKKSEncoder encoder(context);
+    double scale = pow(2.0, 40);
 
-    // Matrix and kernel
-    vector<double> matrix(100);
-    iota(matrix.begin(), matrix.end(), 1);
-    vector<double> kernel(9, 1.0); // All-ones kernel (mean filter)
+    vector<double> a = {1.0, 2.0, 3.0, 4.0};
+    vector<double> b = {0.5, 1.0, 1.5, 2.0};
 
-    Plaintext pt_kernel;
-    encoder.encode(kernel, scale, pt_kernel);
+    Plaintext pa, pb;
+    encoder.encode(a, scale, pa);
+    encoder.encode(b, scale, pb);
 
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            vector<double> patch;
-            for (int r = 0; r < 3; ++r)
-                for (int c = 0; c < 3; ++c)
-                    patch.push_back(matrix[(i + r) * 10 + (j + c)]);
+    Ciphertext ca, cb;
+    encryptor.encrypt(pa, ca);
+    encryptor.encrypt(pb, cb);
 
-            Plaintext pt_patch;
-            encoder.encode(patch, scale, pt_patch);
-            Ciphertext ct;
-            encryptor.encrypt(pt_patch, ct);
+    Ciphertext prod;
+    evaluator.multiply(ca, cb, prod);
+    evaluator.relinearize_inplace(prod, relin_keys);
+    evaluator.rescale_to_next_inplace(prod);
 
-            evaluator.multiply_plain_inplace(ct, pt_kernel);
-            evaluator.relinearize_inplace(ct, relin_keys);
-            evaluator.rescale_to_next_inplace(ct);
-
-            Plaintext pt_out;
-            decryptor.decrypt(ct, pt_out);
-            vector<double> decoded;
-            encoder.decode(pt_out, decoded);
-            double sum = accumulate(decoded.begin(), decoded.end(), 0.0);
-            cout << "Sum: " << sum << endl;
-        }
+    vector<Ciphertext> rotated = {prod};
+    for (int i = 1; i < 4; i <<= 1) {
+        Ciphertext r;
+        evaluator.rotate_vector(prod, i, gal_keys, r);
+        rotated.push_back(r);
     }
+
+    Ciphertext dot;
+    evaluator.add_many(rotated, dot);
+
+    Plaintext plain_result;
+    vector<double> result;
+    decryptor.decrypt(dot, plain_result);
+    encoder.decode(plain_result, result);
+    cout << "Dot product (add_many): " << result[0] << endl;
 
     return 0;
 }

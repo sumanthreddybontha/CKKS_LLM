@@ -5,91 +5,73 @@
 using namespace std;
 using namespace seal;
 
-void example_ckks_dot_product_batched();
-
 int main() {
-    example_ckks_dot_product_batched();
-    return 0;
-}
-
-void example_ckks_dot_product_batched() {
-    cout << "\nCKKS Dot Product: Batched Implementation\n" << endl;
-
-    // Configuration
+    // Initialize CKKS
     EncryptionParameters parms(scheme_type::ckks);
-    size_t poly_modulus_degree = 16384;
-    parms.set_poly_modulus_degree(poly_modulus_degree);
-    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 60, 40, 40, 60 }));
+    parms.set_poly_modulus_degree(8192);
+    parms.set_coeff_modulus(CoeffModulus::Create(8192, {50, 30, 30, 50}));
 
-    // Context
-    auto context = SEALContext::Create(parms);
-    print_parameters(context);
-
-    // Keys
+    SEALContext context(parms);
     KeyGenerator keygen(context);
-    auto public_key = keygen.public_key();
     auto secret_key = keygen.secret_key();
-    auto relin_keys = keygen.relin_keys();
-    GaloisKeys gal_keys = keygen.galois_keys();
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
+    RelinKeys relin_keys;
+    keygen.create_relin_keys(relin_keys);
+    GaloisKeys galois_keys;
+    keygen.create_galois_keys(galois_keys);
 
-    // Utilities
+    // Prepare crypto objects
     Encryptor encryptor(context, public_key);
     Evaluator evaluator(context);
     Decryptor decryptor(context, secret_key);
     CKKSEncoder encoder(context);
     size_t slot_count = encoder.slot_count();
 
-    // Prepare multiple dot products
-    size_t num_vectors = 4;
-    size_t vec_size = slot_count / num_vectors;
-    
-    vector<double> vec1(slot_count, 0.0);
-    vector<double> vec2(slot_count, 0.0);
-    
-    // Fill vectors with sample data for multiple dot products
-    for (size_t i = 0; i < num_vectors; i++) {
-        for (size_t j = 0; j < vec_size; j++) {
-            vec1[i * vec_size + j] = (i + 1) * (j + 1);
-            vec2[i * vec_size + j] = (i + 1) + (j + 1);
-        }
-    }
+    // Get user input
+    size_t vec_size;
+    cout << "Enter vector size (max " << slot_count << "): ";
+    cin >> vec_size;
+    vec_size = min(vec_size, slot_count);
 
-    // Encode and encrypt
-    Plaintext plain_vec1, plain_vec2;
-    encoder.encode(vec1, pow(2.0, 40), plain_vec1);
-    encoder.encode(vec2, pow(2.0, 40), plain_vec2);
+    vector<double> vec1(vec_size), vec2(vec_size);
+    cout << "Enter first vector elements: ";
+    for (auto &x : vec1) cin >> x;
+    cout << "Enter second vector elements: ";
+    for (auto &x : vec2) cin >> x;
 
-    Ciphertext encrypted_vec1, encrypted_vec2;
-    encryptor.encrypt(plain_vec1, encrypted_vec1);
-    encryptor.encrypt(plain_vec2, encrypted_vec2);
+    // Pad vectors
+    vec1.resize(slot_count, 0.0);
+    vec2.resize(slot_count, 0.0);
 
-    // Compute element-wise multiplication
-    Ciphertext encrypted_product;
-    evaluator.multiply(encrypted_vec1, encrypted_vec2, encrypted_product);
-    evaluator.relinearize_inplace(encrypted_product, relin_keys);
-    evaluator.rescale_to_next_inplace(encrypted_product);
+    // Encrypt vectors
+    double scale = pow(2.0, 40);
+    Plaintext plain1, plain2;
+    encoder.encode(vec1, scale, plain1);
+    encoder.encode(vec2, scale, plain2);
+    Ciphertext encrypted1, encrypted2;
+    encryptor.encrypt(plain1, encrypted1);
+    encryptor.encrypt(plain2, encrypted2);
 
-    // Sum each vector's elements separately
-    Ciphertext encrypted_sums = encrypted_product;
-    for (size_t i = vec_size; i < slot_count; i *= 2) {
+    // Compute dot product
+    evaluator.multiply_inplace(encrypted1, encrypted2);
+    evaluator.relinearize_inplace(encrypted1, relin_keys);
+    evaluator.rescale_to_next_inplace(encrypted1);
+
+    // Sum elements
+    Ciphertext result = encrypted1;
+    for (size_t i = 1; i < slot_count; i *= 2) {
         Ciphertext rotated;
-        evaluator.rotate_vector(encrypted_sums, i, gal_keys, rotated);
-        evaluator.add_inplace(encrypted_sums, rotated);
+        evaluator.rotate_vector(result, i, galois_keys, rotated);
+        evaluator.add_inplace(result, rotated);
     }
 
-    // Decrypt and decode
-    Plaintext plain_sums;
-    decryptor.decrypt(encrypted_sums, plain_sums);
-    vector<double> sums;
-    encoder.decode(plain_sums, sums);
+    // Get result
+    Plaintext plain_result;
+    decryptor.decrypt(result, plain_result);
+    vector<double> decoded;
+    encoder.decode(plain_result, decoded);
 
-    // Print results for each dot product
-    for (size_t i = 0; i < num_vectors; i++) {
-        double expected = 0.0;
-        for (size_t j = 0; j < vec_size; j++) {
-            expected += vec1[i * vec_size + j] * vec2[i * vec_size + j];
-        }
-        cout << "Dot product " << i+1 << ": " << sums[i * vec_size] 
-             << " (expected: " << expected << ")" << endl;
-    }
+    cout << "Computed dot product: " << decoded[0] << endl;
+    return 0;
 }

@@ -1,73 +1,79 @@
-// CKKS Dot Product using Microsoft SEAL (Version 1)
-// Unique implementation: vector size = 4, using manual scale and encoding
-#include "seal/seal.h"
+#include <seal/seal.h>
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 using namespace seal;
 
 int main() {
-    // Step 1: Set encryption parameters for CKKS
-    EncryptionParameters parms(scheme_type::ckks);
+    // Step 1: Set CKKS parameters
     size_t poly_modulus_degree = 8192;
+    EncryptionParameters parms(scheme_type::ckks);
     parms.set_poly_modulus_degree(poly_modulus_degree);
-    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 60, 40, 40, 60 }));
+    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {60, 40, 40, 60}));
 
-    // Step 2: Create SEALContext
-    auto context = SEALContext::Create(parms);
-    print_parameters(context);
+    // Step 2: Create SEAL context
+    SEALContext context(parms);
 
     // Step 3: Key generation
     KeyGenerator keygen(context);
-    auto public_key = keygen.public_key();
-    auto secret_key = keygen.secret_key();
-    auto relin_keys = keygen.relin_keys_local();
+
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
+
+    SecretKey secret_key = keygen.secret_key();
+
+    RelinKeys relin_keys;
+    keygen.create_relin_keys(relin_keys);
+
+    GaloisKeys gal_keys;
+    keygen.create_galois_keys(gal_keys);
+
     Encryptor encryptor(context, public_key);
     Decryptor decryptor(context, secret_key);
     Evaluator evaluator(context);
     CKKSEncoder encoder(context);
 
-    // Step 4: Prepare vectors and encode
-    vector<double> vec1 = {1.0, 2.0, 3.0, 4.0};
-    vector<double> vec2 = {4.0, 3.0, 2.0, 1.0};
-
+    // Step 4: Input vectors
+    vector<double> vec1 = {1.1, 2.2, 3.3, 4.4};
+    vector<double> vec2 = {5.0, 6.0, 7.0, 8.0};
     double scale = pow(2.0, 40);
-    Plaintext plain1, plain2;
-    encoder.encode(vec1, scale, plain1);
-    encoder.encode(vec2, scale, plain2);
 
-    // Step 5: Encrypt the vectors
-    Ciphertext encrypted1, encrypted2;
-    encryptor.encrypt(plain1, encrypted1);
-    encryptor.encrypt(plain2, encrypted2);
+    // Step 5: Encode and encrypt
+    Plaintext pt1, pt2;
+    encoder.encode(vec1, scale, pt1);
+    encoder.encode(vec2, scale, pt2);
+
+    Ciphertext ct1, ct2;
+    encryptor.encrypt(pt1, ct1);
+    encryptor.encrypt(pt2, ct2);
 
     // Step 6: Element-wise multiplication
-    Ciphertext encrypted_product;
-    evaluator.multiply(encrypted1, encrypted2, encrypted_product);
-    evaluator.relinearize_inplace(encrypted_product, relin_keys);
-    evaluator.rescale_to_next_inplace(encrypted_product);
+    Ciphertext prod;
+    evaluator.multiply(ct1, ct2, prod);
+    evaluator.relinearize_inplace(prod, relin_keys);
+    evaluator.rescale_to_next_inplace(prod);
 
-    // Step 7: Sum all elements in the encrypted vector
-    // First, align the levels
-    auto new_parms_id = encrypted_product.parms_id();
-    encoder.encode(1.0, encrypted_product.scale(), plain1); // dummy plain for rotation weights
+    // Step 7: Sum all elements (dot product using rotations)
+    // Ensure modulus and scale are aligned for rotation
+    Ciphertext dot = prod;
+    size_t n = vec1.size();
 
-    GaloisKeys gal_keys = keygen.galois_keys_local();
-    for (size_t i = 1; i < vec1.size(); i <<= 1) {
+    for (size_t i = 1; i < n; i <<= 1) {
         Ciphertext rotated;
-        evaluator.rotate_vector(encrypted_product, i, gal_keys, rotated);
-        evaluator.add_inplace(encrypted_product, rotated);
+        evaluator.rotate_vector(dot, i, gal_keys, rotated);
+        evaluator.add_inplace(dot, rotated);
     }
 
     // Step 8: Decrypt and decode
-    Plaintext plain_result;
-    decryptor.decrypt(encrypted_product, plain_result);
-    vector<double> result;
-    encoder.decode(plain_result, result);
+    Plaintext result_plain;
+    decryptor.decrypt(dot, result_plain);
 
-    // Output the dot product (first element of result)
-    cout << "Dot product: " << result[0] << endl;
+    vector<double> result;
+    encoder.decode(result_plain, result);
+
+    cout << "Encrypted dot product (approximate): " << result[0] << endl;
 
     return 0;
 }
