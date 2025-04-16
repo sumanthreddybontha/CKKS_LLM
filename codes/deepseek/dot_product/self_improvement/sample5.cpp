@@ -1,130 +1,164 @@
 #include <iostream>
 #include <vector>
-#include <seal/seal.h>
+#include <thread>
+#include <mutex>
+#include <cmath>
+#include <algorithm>
+#include "seal/seal.h"
 
-using namespace std;
 using namespace seal;
+using namespace std;
 
-class CKKS_DotProduct {
+class OptimizedDotProduct {
 private:
-    SEALContext context;
-    CKKSEncoder encoder;
-    Encryptor encryptor;
-    Evaluator evaluator;
-    Decryptor decryptor;
+    // SEAL Components
+    shared_ptr<SEALContext> context;
+    unique_ptr<CKKSEncoder> encoder;
+    unique_ptr<Encryptor> encryptor;
+    unique_ptr<Evaluator> evaluator;
+    unique_ptr<Decryptor> decryptor;
+    RelinKeys relin_keys;
     PublicKey public_key;
     SecretKey secret_key;
-    RelinKeys relin_keys;
-    GaloisKeys gal_keys;
-    size_t slot_count;
-    
+    double scale;
+    size_t poly_modulus_degree;
+
+    // Thread Safety
+    mutex crypto_mutex;
+
+    // RAG Hardware Knowledge Base
+    struct HardwareProfile {
+        string name;
+        unsigned thread_count;
+        size_t optimal_chunk;
+    };
+
+    const vector<HardwareProfile> hardware_db = {
+        {"Mobile/Low-End", 2, 1024},
+        {"Desktop/Mid-Range", 4, 2048},
+        {"Workstation/High-End", 8, 4096},
+        {"Server", 16, 8192}
+    };
+
+    // Get optimal hardware profile
+    const HardwareProfile& get_hardware_profile() const {
+        const unsigned hw_threads = thread::hardware_concurrency();
+        for (const auto& profile : hardware_db) {
+            if (hw_threads >= profile.thread_count) {
+                cout << "Using hardware profile: " << profile.name 
+                     << " (Threads: " << profile.thread_count
+                     << ", Chunk: " << profile.optimal_chunk << ")\n";
+                return profile;
+            }
+        }
+        return hardware_db.back();
+    }
+
 public:
-    CKKS_DotProduct(size_t poly_modulus_degree = 8192) : 
-        context(create_context(poly_modulus_degree)),
-        encoder(context),
-        encryptor(context, public_key),
-        evaluator(context),
-        decryptor(context, secret_key) {
-        
-        KeyGenerator keygen(context);
+    OptimizedDotProduct(size_t poly_degree = 8192) : poly_modulus_degree(poly_degree) {
+        // Initialize SEAL context
+        EncryptionParameters parms(scheme_type::ckks);
+        parms.set_poly_modulus_degree(poly_degree);
+        parms.set_coeff_modulus(CoeffModulus::Create(poly_degree, {50, 40, 50}));
+
+        context = make_shared<SEALContext>(parms);
+        encoder = make_unique<CKKSEncoder>(*context);
+
+        // Generate keys
+        KeyGenerator keygen(*context);
         secret_key = keygen.secret_key();
         keygen.create_public_key(public_key);
         keygen.create_relin_keys(relin_keys);
-        keygen.create_galois_keys(gal_keys);
-        
-        encryptor = Encryptor(context, public_key);
-        slot_count = encoder.slot_count();
+
+        encryptor = make_unique<Encryptor>(*context, public_key);
+        decryptor = make_unique<Decryptor>(*context, secret_key);
+        evaluator = make_unique<Evaluator>(*context);
+
+        scale = pow(2.0, 40);
     }
-    
-    SEALContext create_context(size_t poly_modulus_degree) {
-        EncryptionParameters parms(scheme_type::ckks);
-        parms.set_poly_modulus_degree(poly_modulus_degree);
-        parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {60, 40, 40, 60}));
-        return SEALContext(parms);
+
+    // Parallel vector initialization
+    vector<double> initialize_vector(size_t size) {
+        vector<double> vec(size);
+        const auto& hw = get_hardware_profile();
+        vector<thread> workers;
+        const size_t chunk_size = min(hw.optimal_chunk, size/hw.thread_count);
+
+        auto init_worker = [&](size_t start, size_t end) {
+            for (size_t i = start; i < end; i++) {
+                vec[i] = (i % 100) / 10.0; // Sample data pattern
+            }
+        };
+
+        for (unsigned t = 0; t < hw.thread_count; t++) {
+            size_t start = t * chunk_size;
+            size_t end = (t == hw.thread_count-1) ? size : start + chunk_size;
+            workers.emplace_back(init_worker, start, end);
+        }
+
+        for (auto& t : workers) t.join();
+        return vec;
     }
-    
-    vector<vector<double>> create_matrix(size_t rows, size_t cols) {
-        vector<vector<double>> matrix(rows, vector<double>(cols));
-        for (size_t i = 0; i < rows; i++) {
-            for (size_t j = 0; j < cols; j++) {
-                matrix[i][j] = sin(i + j);
-            }
-        }
-        return matrix;
+
+    // Thread-safe encryption
+    Ciphertext encrypt_vector(const vector<double>& vec) {
+        lock_guard<mutex> lock(crypto_mutex);
+        vector<double> padded_vec(poly_modulus_degree/2, 0.0);
+        copy(vec.begin(), vec.end(), padded_vec.begin());
+
+        Plaintext pt;
+        encoder->encode(padded_vec, scale, pt);
+        Ciphertext ct;
+        encryptor->encrypt(pt, ct);
+        return ct;
     }
-    
-    vector<vector<double>> create_kernel(size_t rows, size_t cols) {
-        vector<vector<double>> kernel(rows, vector<double>(cols));
-        for (size_t i = 0; i < rows; i++) {
-            for (size_t j = 0; j < cols; j++) {
-                kernel[i][j] = cos(i - j);
-            }
-        }
-        return kernel;
+
+    // Thread-safe dot product computation
+    Ciphertext compute_dot_product(const Ciphertext& ct1, const Ciphertext& ct2) {
+        lock_guard<mutex> lock(crypto_mutex);
+        Ciphertext result;
+        evaluator->multiply(ct1, ct2, result);
+        evaluator->relinearize_inplace(result, relin_keys);
+        evaluator->rescale_to_next_inplace(result);
+        return result;
     }
-    
-    void compute_dot_products() {
-        auto matrix = create_matrix(10, 10);
-        auto kernel = create_kernel(3, 3);
-        
-        // Encode and encrypt kernel
-        vector<Plaintext> pt_kernel(9);
-        vector<Ciphertext> ct_kernel(9);
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                vector<double> kernel_vec(slot_count, kernel[i][j]);
-                encoder.encode(kernel_vec, 1 << 40, pt_kernel[i*3+j]);
-                encryptor.encrypt(pt_kernel[i*3+j], ct_kernel[i*3+j]);
-            }
-        }
-        
-        // Process each 3x3 window
-        for (int row = 0; row <= 7; row++) {
-            for (int col = 0; col <= 7; col++) {
-                Ciphertext window_sum;
-                bool first = true;
-                
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 3; j++) {
-                        Plaintext pt_val;
-                        encoder.encode(vector<double>(slot_count, matrix[row+i][col+j]), 1 << 40, pt_val);
-                        
-                        Ciphertext multiplied;
-                        evaluator.multiply_plain(ct_kernel[i*3+j], pt_val, multiplied);
-                        
-                        if (first) {
-                            window_sum = multiplied;
-                            first = false;
-                        } else {
-                            evaluator.add_inplace(window_sum, multiplied);
-                        }
-                    }
-                }
-                
-                // Decrypt first result as example
-                if (row == 0 && col == 0) {
-                    Plaintext pt_result;
-                    decryptor.decrypt(window_sum, pt_result);
-                    vector<double> result;
-                    encoder.decode(pt_result, result);
-                    cout << "Dot product at (0,0): " << result[0] << endl;
-                    
-                    // Calculate expected result for verification
-                    double expected = 0.0;
-                    for (int i = 0; i < 3; i++) {
-                        for (int j = 0; j < 3; j++) {
-                            expected += matrix[i][j] * kernel[i][j];
-                        }
-                    }
-                    cout << "Expected result: " << expected << endl;
-                }
-            }
-        }
+
+    // Thread-safe decryption
+    vector<double> decrypt_result(const Ciphertext& ct) {
+        lock_guard<mutex> lock(crypto_mutex);
+        Plaintext pt;
+        decryptor->decrypt(ct, pt);
+        vector<double> result;
+        encoder->decode(pt, result);
+        return result;
     }
 };
 
 int main() {
-    CKKS_DotProduct ckks_dot_product;
-    ckks_dot_product.compute_dot_products();
+    OptimizedDotProduct odp;
+
+    // Parallel initialization
+    cout << "Initializing vectors..." << endl;
+    auto vec1 = odp.initialize_vector(4096);
+    auto vec2 = odp.initialize_vector(4096);
+
+    // Serial crypto operations
+    cout << "Encrypting vectors..." << endl;
+    auto ct1 = odp.encrypt_vector(vec1);
+    auto ct2 = odp.encrypt_vector(vec2);
+
+    cout << "Computing dot product..." << endl;
+    auto result_ct = odp.compute_dot_product(ct1, ct2);
+
+    cout << "Decrypting result..." << endl;
+    auto result = odp.decrypt_result(result_ct);
+
+    // Print sample results
+    cout << "First 5 slots of result:" << endl;
+    for (int i = 0; i < 5; i++) {
+        cout << result[i] << " ";
+    }
+    cout << endl;
+
     return 0;
 }

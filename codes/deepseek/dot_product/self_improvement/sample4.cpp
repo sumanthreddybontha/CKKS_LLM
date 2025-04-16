@@ -1,166 +1,193 @@
-#include <iostream>
-#include <vector>
 #include <seal/seal.h>
-#include <chrono>
+#include <vector>
+#include <numeric>
+#include <thread>
+#include <atomic>
+#include <memory>
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <mutex>
 
-using namespace std;
 using namespace seal;
-using namespace std::chrono;
+using namespace std;
 
-struct CKKSConfig {
-    size_t poly_modulus_degree = 16384;  // Larger poly modulus for more operations
-    vector<int> coeff_modulus_bits = {50, 30, 30, 30, 50};  // More primes for deeper computations
-    double scale = pow(2.0, 40);
-};
-
-class ParallelCKKSProcessor {
-private:
-    SEALContext context;
-    CKKSEncoder encoder;
-    Encryptor encryptor;
-    Evaluator evaluator;
-    Decryptor decryptor;
+class ParallelDotProduct {
+    unique_ptr<SEALContext> context;
     PublicKey public_key;
     SecretKey secret_key;
     RelinKeys relin_keys;
-    GaloisKeys gal_keys;
-    CKKSConfig config;
-    size_t slot_count;
-    
-public:
-    ParallelCKKSProcessor(const CKKSConfig &cfg) : config(cfg), 
-        context(create_context(config.poly_modulus_degree, config.coeff_modulus_bits)),
-        encoder(context),
-        encryptor(context, public_key),
-        evaluator(context),
-        decryptor(context, secret_key) {
-        
-        // Key generation
-        KeyGenerator keygen(context);
+
+    unique_ptr<Encryptor> encryptor;
+    unique_ptr<Evaluator> evaluator;
+    unique_ptr<Decryptor> decryptor;
+    unique_ptr<CKKSEncoder> encoder;
+
+    // Parallel processing state
+    size_t optimal_chunk_size;
+    unsigned optimal_threads;
+    mutex performance_mutex;
+
+    double scale;
+
+    void initialize_seal() {
+        EncryptionParameters parms(scheme_type::ckks);
+        const size_t poly_modulus_degree = 8192;
+        parms.set_poly_modulus_degree(poly_modulus_degree);
+        parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {60, 40, 60}));
+
+        context = make_unique<SEALContext>(parms);
+        KeyGenerator keygen(*context);
         secret_key = keygen.secret_key();
         keygen.create_public_key(public_key);
         keygen.create_relin_keys(relin_keys);
-        keygen.create_galois_keys(gal_keys);
-        
-        slot_count = encoder.slot_count();
-        cout << "Number of slots: " << slot_count << endl;
+
+        encryptor = make_unique<Encryptor>(*context, public_key);
+        evaluator = make_unique<Evaluator>(*context);
+        decryptor = make_unique<Decryptor>(*context, secret_key);
+        encoder = make_unique<CKKSEncoder>(*context);
+
+        scale = pow(2.0, 30);  // Safer scale to avoid overflow
+
+        optimal_threads = max(thread::hardware_concurrency(), 1u);
+        optimal_chunk_size = 512;
     }
-    
-    SEALContext create_context(size_t poly_modulus_degree, const vector<int> &coeff_modulus_bits) {
-        EncryptionParameters parms(scheme_type::ckks);
-        parms.set_poly_modulus_degree(poly_modulus_degree);
-        parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, coeff_modulus_bits));
-        return SEALContext(parms);
+
+    double process_chunk(const vector<double>& vec1,
+                         const vector<double>& vec2,
+                         size_t start,
+                         size_t end) {
+        vector<double> chunk(end - start);
+        transform(vec1.begin() + start, vec1.begin() + end,
+                  vec2.begin() + start, chunk.begin(),
+                  multiplies<double>());
+
+        Plaintext plain;
+        encoder->encode(chunk, scale, plain);
+
+        Ciphertext encrypted;
+        encryptor->encrypt(plain, encrypted);
+        evaluator->square_inplace(encrypted);
+        evaluator->relinearize_inplace(encrypted, relin_keys);
+
+        Plaintext plain_result;
+        decryptor->decrypt(encrypted, plain_result);
+
+        vector<double> result;
+        encoder->decode(plain_result, result);
+        return accumulate(result.begin(), result.end(), 0.0);
     }
-    
-    vector<vector<double>> generate_random_matrix(size_t rows, size_t cols) {
-        vector<vector<double>> matrix(rows, vector<double>(cols));
-        for (size_t i = 0; i < rows; i++) {
-            for (size_t j = 0; j < cols; j++) {
-                matrix[i][j] = static_cast<double>(rand()) / RAND_MAX;
-            }
-        }
-        return matrix;
+
+    void update_performance_metrics(size_t vector_size,
+                                    size_t chunk_size,
+                                    double duration_ms) {
+        lock_guard<mutex> lock(performance_mutex);
+        const double learning_rate = 0.1;
+        size_t new_chunk_size = static_cast<size_t>(
+            optimal_chunk_size * (1 - learning_rate) +
+            chunk_size * learning_rate);
+
+        optimal_chunk_size = 1 << static_cast<size_t>(log2(new_chunk_size) + 0.5);
+
+        cout << "Performance update:\n"
+             << "  Chunk size: " << optimal_chunk_size << "\n"
+             << "  Threads: " << optimal_threads << "\n"
+             << "  Duration: " << duration_ms << "ms\n";
     }
-    
-    vector<vector<double>> generate_gaussian_kernel(size_t size, double sigma = 1.0) {
-        vector<vector<double>> kernel(size, vector<double>(size));
-        double sum = 0.0;
-        int center = size / 2;
-        
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                double x = i - center;
-                double y = j - center;
-                kernel[i][j] = exp(-(x*x + y*y) / (2 * sigma * sigma));
-                sum += kernel[i][j];
-            }
-        }
-        
-        // Normalize
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                kernel[i][j] /= sum;
-            }
-        }
-        
-        return kernel;
+
+public:
+    ParallelDotProduct() {
+        initialize_seal();
     }
-    
-    void process_convolution() {
-        auto matrix = generate_random_matrix(10, 10);
-        auto kernel = generate_gaussian_kernel(3);
-        
-        // Encrypt kernel elements
-        vector<Ciphertext> encrypted_kernel(9);
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                Plaintext pt_kernel;
-                encoder.encode(vector<double>(slot_count, kernel[i][j]), config.scale, pt_kernel);
-                encryptor.encrypt(pt_kernel, encrypted_kernel[i*3 + j]);
-            }
+
+    double compute(const vector<double>& vec1, const vector<double>& vec2) {
+        if (vec1.size() != vec2.size()) {
+            throw invalid_argument("Vectors must be same size");
         }
-        
-        // Process each window position
-        auto start = high_resolution_clock::now();
-        
-        for (int row = 0; row <= 7; row++) {
-            for (int col = 0; col <= 7; col++) {
-                Ciphertext window_result;
-                bool first = true;
-                
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 3; j++) {
-                        Plaintext pt_matrix_val;
-                        encoder.encode(vector<double>(slot_count, matrix[row+i][col+j]), config.scale, pt_matrix_val);
-                        
-                        Ciphertext temp;
-                        evaluator.multiply_plain(encrypted_kernel[i*3 + j], pt_matrix_val, temp);
-                        
-                        if (first) {
-                            window_result = temp;
-                            first = false;
-                        } else {
-                            evaluator.add_inplace(window_result, temp);
-                        }
-                    }
+
+        const size_t total_size = vec1.size();
+        size_t chunk_size = min(optimal_chunk_size, total_size);
+        unsigned num_threads = min<unsigned>(optimal_threads,
+                                             (total_size + chunk_size - 1) / chunk_size);
+
+        vector<thread> workers;
+        vector<double> partial_results(num_threads, 0.0);
+        atomic<size_t> current_index(0);
+
+        auto start_time = chrono::high_resolution_clock::now();
+
+        for (unsigned t = 0; t < num_threads; ++t) {
+            workers.emplace_back([&, t] {
+                while (true) {
+                    size_t start = current_index.fetch_add(chunk_size);
+                    if (start >= total_size) break;
+
+                    size_t end = min(start + chunk_size, total_size);
+                    partial_results[t] += process_chunk(vec1, vec2, start, end);
                 }
-                
-                // For demonstration, decrypt the first result
-                if (row == 0 && col == 0) {
-                    Plaintext pt_result;
-                    decryptor.decrypt(window_result, pt_result);
-                    vector<double> result;
-                    encoder.decode(pt_result, result);
-                    
-                    cout << "First window result: " << result[0] << endl;
-                    
-                    // Compute expected value
-                    double expected = 0.0;
-                    for (int i = 0; i < 3; i++) {
-                        for (int j = 0; j < 3; j++) {
-                            expected += matrix[i][j] * kernel[i][j];
-                        }
-                    }
-                    cout << "Expected value: " << expected << endl;
-                    cout << "Absolute error: " << abs(result[0] - expected) << endl;
-                }
-            }
+            });
         }
-        
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<milliseconds>(stop - start);
-        cout << "Total computation time: " << duration.count() << " ms" << endl;
+
+        for (auto& t : workers) t.join();
+
+        auto end_time = chrono::high_resolution_clock::now();
+        double duration = chrono::duration_cast<chrono::milliseconds>(
+                              end_time - start_time)
+                              .count();
+
+        update_performance_metrics(total_size, chunk_size, duration);
+        return accumulate(partial_results.begin(), partial_results.end(), 0.0);
+    }
+
+    void print_config() const {
+        cout << "Current configuration:\n"
+             << "  Optimal threads: " << optimal_threads << "\n"
+             << "  Optimal chunk size: " << optimal_chunk_size << "\n"
+             << "  Slot capacity: " << encoder->slot_count() << endl;
     }
 };
 
 int main() {
-    CKKSConfig config;
-    config.poly_modulus_degree = 8192;  // Reduced for faster execution
-    config.coeff_modulus_bits = {40, 30, 40};
-    
-    ParallelCKKSProcessor processor(config);
-    processor.process_convolution();
-    
+    try {
+        ParallelDotProduct pdp;
+        pdp.print_config();
+
+        const size_t test_size = 10000;
+        vector<double> vec1(test_size), vec2(test_size);
+
+        auto parallel_init = [](vector<double>& v, double init_val) {
+            const unsigned threads = thread::hardware_concurrency();
+            vector<thread> workers;
+            const size_t chunk = v.size() / threads;
+
+            for (unsigned t = 0; t < threads; ++t) {
+                size_t start = t * chunk;
+                size_t end = (t == threads - 1) ? v.size() : start + chunk;
+                workers.emplace_back([&, start, end, init_val] {
+                    for (size_t i = start; i < end; ++i) {
+                        v[i] = init_val + i;
+                    }
+                });
+            }
+
+            for (auto& t : workers) t.join();
+        };
+
+        parallel_init(vec1, 1.0);
+        parallel_init(vec2, 0.5);
+
+        double result = pdp.compute(vec1, vec2);
+        double expected = inner_product(vec1.begin(), vec1.end(), vec2.begin(), 0.0);
+
+        cout << "\nResults:\n"
+             << "  Computed: " << result << "\n"
+             << "  Expected: " << expected << "\n"
+             << "  Error: " << abs(result - expected) / expected << endl;
+
+    } catch (const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+        return 1;
+    }
+
     return 0;
 }

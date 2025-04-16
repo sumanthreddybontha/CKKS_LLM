@@ -1,10 +1,11 @@
 #!/bin/bash
 
 # === CONFIGURATION ===
-SEAL_INCLUDE_DIR="$HOME/SEAL/native/src"
-SEAL_EXTRA_INCLUDE="$HOME/SEAL/build/native/include"
+SEAL_DIR="$HOME/Desktop/CKKS_LLM/SEAL"
+SEAL_INCLUDE_DIR="$SEAL_DIR/native/src"
+SEAL_CONFIG_INCLUDE="$SEAL_DIR/build/native/src"      # Contains config.h
 SEAL_GSL_INCLUDE="$HOME/GSL/include"
-SEAL_LIB="$HOME/SEAL/build/lib/libseal-4.1.a"
+SEAL_LIB="$SEAL_DIR/build/lib/libseal-4.1.a"
 
 BASE_DIR="codes"
 REPORT_DIR="report"
@@ -24,8 +25,7 @@ for llm in $(ls "$BASE_DIR"); do
         echo "🔧 Compiling: $file"
         g++ "$file" -std=c++17 \
             -I"$SEAL_INCLUDE_DIR" \
-            -I"$SEAL_INCLUDE_DIR/seal" \
-            -I"$SEAL_EXTRA_INCLUDE" \
+            -I"$SEAL_CONFIG_INCLUDE" \
             -I"$SEAL_GSL_INCLUDE" \
             "$SEAL_LIB" \
             -o "$binary" 2> /tmp/compile_error.txt
@@ -33,17 +33,20 @@ for llm in $(ls "$BASE_DIR"); do
         if [ $? -eq 0 ]; then
           compiles="YES"
           echo "🚀 Running..."
-          output=$(timeout 10s "$binary" 2>&1)
+          output=$(gtimeout 10s "$binary" 2>&1)
           if [ $? -eq 0 ]; then
             runs="YES"
-            echo "$llm,$task,$technique,$filename,$compiles,$runs,\"$output\"" >> "$REPORT_FILE"
+            clean_output=$(echo "$output" | tr '\n' ' ' | sed 's/"/'\''/g')
+            echo "$llm,$task,$technique,$filename,$compiles,$runs,\"$clean_output\"" >> "$REPORT_FILE"
           else
             runs="NO"
-            echo "$llm,$task,$technique,$filename,$compiles,$runs,ERROR" >> "$REPORT_FILE"
+            runtime_error=$(echo "$output" | tr '\n' ' ' | sed 's/"/'\''/g')
+            echo "$llm,$task,$technique,$filename,$compiles,$runs,\"$runtime_error\"" >> "$REPORT_FILE"
           fi
         else
           compiles="NO"
-          echo "$llm,$task,$technique,$filename,$compiles,NO,COMPILATION_FAILED" >> "$REPORT_FILE"
+          compile_error=$(cat /tmp/compile_error.txt | tr '\n' ' ' | sed 's/"/'\''/g')
+          echo "$llm,$task,$technique,$filename,$compiles,NO,\"$compile_error\"" >> "$REPORT_FILE"
         fi
       done
     done
