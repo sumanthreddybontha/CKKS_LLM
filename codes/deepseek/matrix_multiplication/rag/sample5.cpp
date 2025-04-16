@@ -80,6 +80,7 @@ vector<Ciphertext> encrypted_matrix_mult(
     CKKSEncoder &encoder,
     Evaluator &evaluator,
     RelinKeys &relin_keys,
+    GaloisKeys &galois_keys,
     double scale) {
     
     size_t rows_A = encrypted_A.size();
@@ -213,7 +214,7 @@ int main() {
     // Homomorphic matrix multiplication
     auto start_he = chrono::high_resolution_clock::now();
     vector<Ciphertext> encrypted_result = encrypted_matrix_mult(
-        encrypted_A, B, encoder, evaluator, relin_keys, scale);
+        encrypted_A, B, encoder, evaluator, relin_keys, galois_keys,scale);
     auto stop_he = chrono::high_resolution_clock::now();
     auto he_duration = chrono::duration_cast<chrono::microseconds>(stop_he - start_he);
     

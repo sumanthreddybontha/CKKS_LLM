@@ -39,7 +39,7 @@ void ckks_matrix_multiplication() {
     parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {60, 40, 40, 60}));
     
     SEALContext context(parms);
-    print_parameters(context);
+    // print_parameters(context);
     cout << endl;
     
     // Generate keys
