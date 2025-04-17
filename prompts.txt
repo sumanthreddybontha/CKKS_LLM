@@ -1,22 +1,21 @@
-Task: Convolution
 Technique: Zero shot Chain of thought prompting
 ###Prompt:
 
-Write a CKKS code in CPP to perform convolution operation using SEAL. 
+Write a CKKS code in CPP to perform {task} operation using SEAL. 
 Perform all the multiplications, addition and dot product operations through homomorphic operations using SEAL. 
 Let’s think step by step. Explain every step. 
-Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
+Make sure to generate the appropriate context and parameter initialzation based on the SEAL library.
 Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate
 
 -------------------------
 Technique: Self Consistency Decoding
 ###Prompt:
 
-Write a CKKS code in CPP to perform convolution operation using SEAL. 
+Write a CKKS code in CPP to perform {task} operation using SEAL. 
 Assume that matrix is of 10x10 and kernel is 3x3
 Perform all the multiplications, addition and dot product operations through homomorphic operations using SEAL. 
 Let’s think step by step. Explain every step. 
-Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
+Make sure to generate the appropriate context and parameter initialzation based on the SEAL library.
 Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate.
 
 
@@ -35,11 +34,11 @@ Technique: Self Improvement (Reflexion)
 
 ###Prompt:
 
-Write a CKKS code in CPP to perform convolution operation using SEAL. 
+Write a CKKS code in CPP to perform {task} operation using SEAL. 
 Assume that matrix is of nxn and kernel is kxk
 Perform all the multiplications, addition and dot product operations through homomorphic operations using SEAL. 
 Let’s think step by step. Explain every step. 
-Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
+Make sure to generate the appropriate context and parameter initialzation based on the SEAL library.
 Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate.
 
 ------------------------
@@ -115,12 +114,12 @@ Recheck for correctness and only write what is required, run a trace internally.
 
 Prompt:
 
-Write a CKKS code in CPP to perform convolution operation using SEAL based on the knowledge graph.
+Write a CKKS code in CPP to perform {task} operation using SEAL based on the knowledge graph.
 [Knowledge Graph]
 Assume that matrix is of nxn and kernel is kxk
 Perform all the multiplications, addition and dot product operations through homomorphic operations using SEAL. 
 Let’s think step by step. Explain every step. 
-Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
+Make sure to generate the appropriate context and parameter initialzation based on the SEAL library.
 Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate.
 
 Lets think step by step.
