@@ -2,8 +2,8 @@ Task: Convolution
 Technique: Zero shot Chain of thought prompting
 ###Prompt:
 
-Write a CKKS code in python to perform convolution operation using openfhe. 
-Perform all the multiplications, addition and dot product operations through homomorphic operations using openfhe. 
+Write a CKKS code in CPP to perform convolution operation using SEAL. 
+Perform all the multiplications, addition and dot product operations through homomorphic operations using SEAL. 
 Let’s think step by step. Explain every step. 
 Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
 Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate
@@ -12,9 +12,9 @@ Recheck the code for any compilations issue, make sure that the predefined metho
 Technique: Self Consistency Decoding
 ###Prompt:
 
-Write a CKKS code in python to perform convolution operation using openfhe. 
+Write a CKKS code in CPP to perform convolution operation using SEAL. 
 Assume that matrix is of 10x10 and kernel is 3x3
-Perform all the multiplications, addition and dot product operations through homomorphic operations using openfhe. 
+Perform all the multiplications, addition and dot product operations through homomorphic operations using SEAL. 
 Let’s think step by step. Explain every step. 
 Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
 Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate.
@@ -22,7 +22,7 @@ Recheck the code for any compilations issue, make sure that the predefined metho
 
 ###Self Consistency Prompt:
 
-I have generated the following responses to the question “Write a CKKS code in python to perform Convolution operation using openfhe.”
+I have generated the following responses to the question “Write a CKKS code in CPP to perform Convolution operation using SEAL.”
 Responses:
 Response 1:
 Response 2:
@@ -35,9 +35,9 @@ Technique: Self Improvement (Reflexion)
 
 ###Prompt:
 
-Write a CKKS code in python to perform convolution operation using openfhe. 
+Write a CKKS code in CPP to perform convolution operation using SEAL. 
 Assume that matrix is of nxn and kernel is kxk
-Perform all the multiplications, addition and dot product operations through homomorphic operations using openfhe. 
+Perform all the multiplications, addition and dot product operations through homomorphic operations using SEAL. 
 Let’s think step by step. Explain every step. 
 Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
 Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate.
@@ -47,90 +47,78 @@ We manually generated a knowledge graph using the existing codes available to us
 
 Below is the knowledge graph obtained:
 
+Use the following knowledge graph to generate CKKS code for homomorphic addition operation using seal in cpp
+graph TD
+    %% Core Concepts
+    A[Homomorphic Encryption] --> B[SEAL Library]
+    B --> C[BFV Scheme]
+    B --> D[CKKS Scheme]
+    A --> E[Fully HE]
+    A --> F[Somewhat HE]
+    
+    %% Encryption Parameters
+    C --> G[Encryption Parameters]
+    G --> H["poly_modulus (xⁿ+1)"]
+    G --> I["coeff_modulus (q=q₁×...×qₖ)"]
+    G --> J["plain_modulus (t)"]
+    G --> K[Noise Parameters]
+    
+    %% Operations
+    C --> L[Core Operations]
+    L --> M[Encrypt/Decrypt]
+    L --> N[Add/Sub]
+    L --> O[Multiply]
+    L --> P[Relinearize]
+    L --> Q[Galois Automorphisms]
+    
+    %% Encoding
+    C --> R[Encoding Schemes]
+    R --> S[Integer Encoder]
+    R --> T[Fractional Encoder]
+    R --> U[CRT Batching]
+    
+    %% Security
+    C --> V[Security]
+    V --> W[RLWE Problem]
+    V --> X[Circular Security]
+    V --> Y[Parameter Security]
+    
+    %% Performance
+    C --> Z[Optimization]
+    Z --> AA[Automatic Parameter Selection]
+    Z --> AB[Noise Simulation]
+    Z --> AC[Memory Pools]
+    
+    %% Relationships
+    H -->|n=power of 2| C
+    I -->|60-bit primes| C
+    J -->|t≡1 mod 2n for batching| U
+    K -->|σ=3.19 default| C
+    M -->|Uses public/secret keys| C
+    O -->|Noise growth| AB
+    P -->|Reduces ciphertext size| O
+    U -->|SIMD operations| Z
+    W -->|Hardness depends on n,q| V
+    AA -->|ChooserEvaluator| Z
+    
+    %% Styling
+    classDef concept fill:#f9f,stroke:#333;
+    classDef operation fill:#bbf,stroke:#333;
+    classDef security fill:#f96,stroke:#333;
+    classDef encoding fill:#9f9,stroke:#333;
+    class A,B,E,F concept;
+    class M,N,O,P,Q operation;
+    class V,W,X,Y security;
+    class R,S,T,U encoding;    Lets think step by step.
 
-
-Knowledge Graph:
-
-Nodes:
-Node: CCParamsCKKSRNS
-Node: SetMultiplicativeDepth
-Node: SetScalingModSize
-Node: SetFirstModSize
-Node: SetBatchSize
-Node: SetRingDim
-Node: GenCryptoContext
-Node: EnableFeature
-Node: KeyGen
-Node: EvalMultKeyGen
-Node: EvalRotateKeyGen
-Node: MakeCKKSPackedPlaintext
-Node: Encrypt
-Node: Decrypt
-Node: EvalAdd
-Node: EvalMult
-Node: EvalSum
-Node: EvalRotate
-Node: EvalPoly
-Node: PublicKey
-Node: SecretKey
-Node: EvalMultKey
-Node: RotationKey
-Node: PKESchemeFeature.PKE
-Node: PKESchemeFeature.KEYSWITCH
-Node: PKESchemeFeature.LEVELEDSHE
-Node: PKESchemeFeature.ADVANCEDSHE
-Node: CryptoContext
-Node: Encoding
-Node: Encryption
-Node: HomomorphicEvaluation
-Node: Decryption
-Node: indexes_for_rotation_key
-Node: mult_depth=4
-Node: ring_dimension=32768
-Node: scale_mod_size=59
-Node: first_mod_size=60
-Node: batch_size=16
-
-Relationships:
-CCParamsCKKSRNS --[configures]--> SetMultiplicativeDepth
-CCParamsCKKSRNS --[configures]--> SetScalingModSize
-CCParamsCKKSRNS --[configures]--> SetFirstModSize
-CCParamsCKKSRNS --[configures]--> SetBatchSize
-CCParamsCKKSRNS --[configures]--> SetRingDim
-SetMultiplicativeDepth --[sets]--> mult_depth=4
-SetScalingModSize --[sets]--> scale_mod_size=59
-SetFirstModSize --[sets]--> first_mod_size=60
-SetBatchSize --[sets]--> batch_size=16
-SetRingDim --[sets]--> ring_dimension=32768
-GenCryptoContext --[creates]--> CryptoContext
-EnableFeature --[enables]--> PKESchemeFeature.PKE
-EnableFeature --[enables]--> PKESchemeFeature.KEYSWITCH
-EnableFeature --[enables]--> PKESchemeFeature.LEVELEDSHE
-EnableFeature --[enables]--> PKESchemeFeature.ADVANCEDSHE
-KeyGen --[generates]--> PublicKey
-KeyGen --[generates]--> SecretKey
-EvalMultKeyGen --[generates]--> EvalMultKey
-EvalRotateKeyGen --[uses]--> indexes_for_rotation_key
-EvalRotateKeyGen --[generates]--> RotationKey
-MakeCKKSPackedPlaintext --[performs]--> Encoding
-Encrypt --[performs]--> Encryption
-Decrypt --[performs]--> Decryption
-EvalAdd --[supports]--> HomomorphicEvaluation
-EvalMult --[supports]--> HomomorphicEvaluation
-EvalMult --[requires]--> EvalMultKey
-EvalSum --[supports]--> HomomorphicEvaluation
-EvalRotate --[supports]--> HomomorphicEvaluation
-EvalRotate --[requires]--> RotationKey
-EvalPoly --[supports]--> HomomorphicEvaluation
-Encoding --[uses]--> SetScalingModSize
-HomomorphicEvaluation --[constrained_by]--> SetMultiplicativeDepth
+Recheck for correctness and only write what is required, run a trace internally.
 
 Prompt:
 
-Write a CKKS code in python to perform convolution operation using openfhe based on the knowledge graph.
+Write a CKKS code in CPP to perform convolution operation using SEAL based on the knowledge graph.
 [Knowledge Graph]
 Assume that matrix is of nxn and kernel is kxk
-Perform all the multiplications, addition and dot product operations through homomorphic operations using openfhe. 
+Perform all the multiplications, addition and dot product operations through homomorphic operations using SEAL. 
 Let’s think step by step. Explain every step. 
 Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
 Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate.
