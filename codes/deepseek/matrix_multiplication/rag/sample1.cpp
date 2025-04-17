@@ -1,12 +1,12 @@
 #include <iostream>
 #include <vector>
-#include <memory>
+#include <cmath>
+#include <chrono>
 #include <seal/seal.h>
 
 using namespace std;
 using namespace seal;
 
-// Helper function to print matrix
 void print_matrix(const vector<vector<double>> &matrix, size_t row_count = 4, size_t col_count = 4) {
     for (size_t i = 0; i < min(row_count, matrix.size()); i++) {
         cout << "[ ";
@@ -17,20 +17,24 @@ void print_matrix(const vector<vector<double>> &matrix, size_t row_count = 4, si
     cout << endl;
 }
 
-// CKKS Matrix Multiplication
 void ckks_matrix_multiplication() {
-    // Set up encryption parameters
+    // Parameters
     EncryptionParameters parms(scheme_type::ckks);
     size_t poly_modulus_degree = 8192;
     parms.set_poly_modulus_degree(poly_modulus_degree);
     parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 60, 40, 40, 60 }));
-    
     double scale = pow(2.0, 40);
-    
+
     SEALContext context(parms);
-    cout << endl;
-    
-    // Generate keys
+    CKKSEncoder encoder(context);
+    size_t slot_count = encoder.slot_count();
+
+    cout << "\nCKKS Parameters:\n";
+    cout << "- poly_modulus_degree: " << poly_modulus_degree << "\n";
+    cout << "- coeff_modulus sizes (bits): ";
+    for (auto &mod : parms.coeff_modulus()) cout << mod.bit_count() << " ";
+    cout << "\n- slot_count: " << slot_count << "\n\n";
+
     KeyGenerator keygen(context);
     auto secret_key = keygen.secret_key();
     PublicKey public_key;
@@ -39,110 +43,107 @@ void ckks_matrix_multiplication() {
     keygen.create_relin_keys(relin_keys);
     GaloisKeys gal_keys;
     keygen.create_galois_keys(gal_keys);
-    
+
     Encryptor encryptor(context, public_key);
     Evaluator evaluator(context);
     Decryptor decryptor(context, secret_key);
-    
-    CKKSEncoder encoder(context);
-    size_t slot_count = encoder.slot_count();
-    cout << "Number of slots: " << slot_count << endl;
-    
-    // Define matrices (2x3 and 3x2 for example)
-    vector<vector<double>> matrix1 = { {1.0, 2.0, 3.0}, 
-                                      {4.0, 5.0, 6.0} };
-    vector<vector<double>> matrix2 = { {7.0, 8.0}, 
-                                      {9.0, 10.0}, 
-                                      {11.0, 12.0} };
-    
-    // Expected result for verification
-    vector<vector<double>> expected_result = { {58.0, 64.0}, 
-                                             {139.0, 154.0} };
-    
-    cout << "Matrix 1:" << endl;
-    print_matrix(matrix1);
-    cout << "Matrix 2:" << endl;
-    print_matrix(matrix2);
-    cout << "Expected result:" << endl;
-    print_matrix(expected_result);
-    
-    // Encode and encrypt matrix1 (row-wise)
-    vector<Plaintext> encoded_matrix1;
+
+    // Matrices
+    vector<vector<double>> matrix1 = {{1, 2, 3}, {4, 5, 6}};
+    vector<vector<double>> matrix2 = {{7, 8}, {9, 10}, {11, 12}};
+    vector<vector<double>> expected = {{58, 64}, {139, 154}};
+
+    cout << "Matrix 1:\n"; print_matrix(matrix1);
+    cout << "Matrix 2:\n"; print_matrix(matrix2);
+    cout << "Expected Result:\n"; print_matrix(expected);
+
+    // Encrypt matrix1 rows
     vector<Ciphertext> encrypted_matrix1;
-    for (const auto &row : matrix1) {
+    for (auto &row : matrix1) {
         Plaintext plain_row;
         encoder.encode(row, scale, plain_row);
-        encoded_matrix1.push_back(plain_row);
-        
-        Ciphertext encrypted_row;
-        encryptor.encrypt(plain_row, encrypted_row);
-        encrypted_matrix1.push_back(encrypted_row);
+        Ciphertext enc_row;
+        encryptor.encrypt(plain_row, enc_row);
+        encrypted_matrix1.push_back(enc_row);
     }
-    
-    // Encode matrix2 (column-wise) - plaintext only
+
+    // Encode matrix2 columns
     vector<Plaintext> encoded_matrix2_cols;
-    for (size_t col = 0; col < matrix2[0].size(); col++) {
-        vector<double> column;
-        for (size_t row = 0; row < matrix2.size(); row++) {
-            column.push_back(matrix2[row][col]);
-        }
-        
-        Plaintext plain_col;
-        encoder.encode(column, scale, plain_col);
-        encoded_matrix2_cols.push_back(plain_col);
+    for (size_t j = 0; j < matrix2[0].size(); j++) {
+        vector<double> column(matrix2.size());
+        for (size_t i = 0; i < matrix2.size(); i++)
+            column[i] = matrix2[i][j];
+
+        Plaintext pt;
+        encoder.encode(column, scale, pt);
+        encoded_matrix2_cols.push_back(pt);
     }
-    
-    // Perform encrypted matrix multiplication
+
+    // Multiply
     vector<Ciphertext> encrypted_result;
+    auto start = chrono::high_resolution_clock::now();
+
     for (size_t i = 0; i < encrypted_matrix1.size(); i++) {
         for (size_t j = 0; j < encoded_matrix2_cols.size(); j++) {
             Ciphertext temp;
             evaluator.multiply_plain(encrypted_matrix1[i], encoded_matrix2_cols[j], temp);
             evaluator.relinearize_inplace(temp, relin_keys);
             evaluator.rescale_to_next_inplace(temp);
-            
-            // Sum all elements in the product vector
+
+            // Sum elements (dot product)
             Ciphertext sum = temp;
-            for (size_t k = 0; k < log2(slot_count); k++) {
+            size_t rotations = matrix1[0].size();
+            for (size_t k = 1; k < rotations; k <<= 1) {
                 Ciphertext rotated;
-                evaluator.rotate_vector(sum, (1 << k), gal_keys, rotated);
+                evaluator.rotate_vector(sum, k, gal_keys, rotated);
                 evaluator.add_inplace(sum, rotated);
             }
-            
+
             encrypted_result.push_back(sum);
         }
     }
-    
-    // Decrypt and decode results
-    cout << "Computed result:" << endl;
+
+    auto end = chrono::high_resolution_clock::now();
+    cout << "Homomorphic multiplication time: " 
+         << chrono::duration_cast<chrono::milliseconds>(end - start).count() 
+         << " ms\n\n";
+
+    // Decrypt & decode
     vector<vector<double>> result_matrix(matrix1.size(), vector<double>(matrix2[0].size()));
     size_t idx = 0;
     for (size_t i = 0; i < matrix1.size(); i++) {
         for (size_t j = 0; j < matrix2[0].size(); j++) {
             Plaintext plain_result;
             decryptor.decrypt(encrypted_result[idx++], plain_result);
-            
-            vector<double> result_vec;
-            encoder.decode(plain_result, result_vec);
-            
-            result_matrix[i][j] = result_vec[0]; // First element contains the sum
+
+            vector<double> decoded;
+            encoder.decode(plain_result, decoded);
+            result_matrix[i][j] = decoded[0]; // First slot = dot product
         }
     }
-    
+
+    cout << "Computed Result:\n";
     print_matrix(result_matrix);
-    
-    // Verify results
-    bool correct = true;
-    for (size_t i = 0; i < expected_result.size(); i++) {
-        for (size_t j = 0; j < expected_result[0].size(); j++) {
-            if (abs(expected_result[i][j] - result_matrix[i][j]) > 0.1) {
-                correct = false;
-                break;
-            }
+
+    // Compare with expected
+    double max_err = 0.0, avg_err = 0.0;
+    size_t count = 0;
+    cout << "Comparison (tolerance = 0.1):\n";
+    for (size_t i = 0; i < expected.size(); i++) {
+        for (size_t j = 0; j < expected[0].size(); j++) {
+            double diff = abs(expected[i][j] - result_matrix[i][j]);
+            cout << "[" << (diff < 0.1 ? "OK" : "❌") << " err=" << diff << "] ";
+            max_err = max(max_err, diff);
+            avg_err += diff;
+            count++;
         }
+        cout << endl;
     }
-    
-    cout << "Result " << (correct ? "correct" : "incorrect") << endl;
+
+    avg_err /= count;
+    cout << "\n✅ Average error: " << avg_err << "\n";
+    cout << "✅ Max error: " << max_err << "\n";
+    cout << "✅ Final Verdict: " << ((max_err < 0.1) ? "PASS ✅" : "FAIL ❌") << endl;
 }
 
 int main() {
@@ -150,7 +151,7 @@ int main() {
         ckks_matrix_multiplication();
     } catch (const exception &e) {
         cerr << "Error: " << e.what() << endl;
-        return -1;
+        return 1;
     }
     return 0;
 }

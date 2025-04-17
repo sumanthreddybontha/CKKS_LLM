@@ -1,166 +1,167 @@
 #include <iostream>
 #include <vector>
+#include <cmath>
 #include <seal/seal.h>
 
 using namespace std;
 using namespace seal;
 
-// Helper function to print matrix
-void print_matrix(const vector<vector<double>> &matrix, size_t row_count = 4, size_t col_count = 4) {
-    for (size_t i = 0; i < min(row_count, matrix.size()); i++) {
+// Helper: Pretty-print matrix
+void print_matrix(const vector<vector<double>> &matrix) {
+    for (const auto &row : matrix) {
         cout << "[ ";
-        for (size_t j = 0; j < min(col_count, matrix[i].size()); j++) {
-            cout << matrix[i][j] << " ";
-        }
-        cout << "]" << endl;
+        for (auto val : row) cout << val << " ";
+        cout << "]\n";
     }
     cout << endl;
 }
 
-// Helper function to create a sample matrix
-vector<vector<double>> create_sample_matrix(size_t rows, size_t cols, double start = 0.0, double step = 1.0) {
-    vector<vector<double>> matrix(rows, vector<double>(cols));
+// Create sample matrix
+vector<vector<double>> create_matrix(size_t rows, size_t cols, double start = 1.0, double step = 1.0) {
+    vector<vector<double>> mat(rows, vector<double>(cols));
     double val = start;
-    for (size_t i = 0; i < rows; i++) {
-        for (size_t j = 0; j < cols; j++) {
-            matrix[i][j] = val;
-            val += step;
-        }
-    }
-    return matrix;
+    for (auto &row : mat)
+        for (auto &cell : row)
+            cell = val, val += step;
+    return mat;
 }
 
-// CKKS Matrix Multiplication
-void ckks_matrix_multiplication() {
-    // Set up encryption parameters
+// Print SEAL context parameters
+void print_seal_params(const SEALContext &context) {
+    auto &parms = context.first_context_data()->parms();
+    cout << "Encryption parameters:\n";
+    cout << "- poly_modulus_degree: " << parms.poly_modulus_degree() << endl;
+    cout << "- coeff_modulus size: ";
+    for (const auto &q : parms.coeff_modulus()) cout << q.bit_count() << " ";
+    cout << "bits\n" << endl;
+}
+
+// Main CKKS Matrix Multiplication Logic
+void ckks_matrix_mult() {
+    // Step 1: Setup SEAL CKKS parameters
     EncryptionParameters parms(scheme_type::ckks);
     size_t poly_modulus_degree = 8192;
     parms.set_poly_modulus_degree(poly_modulus_degree);
     parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {60, 40, 40, 60}));
-    
+
     SEALContext context(parms);
-    // print_parameters(context);
-    cout << endl;
-    
-    // Generate keys
+    print_seal_params(context);
+
+    // Step 2: Key generation
     KeyGenerator keygen(context);
-    auto secret_key = keygen.secret_key();
     PublicKey public_key;
+    SecretKey secret_key = keygen.secret_key();
     keygen.create_public_key(public_key);
     RelinKeys relin_keys;
-    keygen.create_relin_keys(relin_keys);
-    GaloisKeys gal_keys;
-    keygen.create_galois_keys(gal_keys);
-    
+keygen.create_relin_keys(relin_keys);
+
+GaloisKeys gal_keys;
+keygen.create_galois_keys(gal_keys);
+
     Encryptor encryptor(context, public_key);
     Evaluator evaluator(context);
     Decryptor decryptor(context, secret_key);
-    
-    // Create encoder with scale 2^40
-    double scale = pow(2.0, 40);
     CKKSEncoder encoder(context);
+
     size_t slot_count = encoder.slot_count();
-    cout << "Number of slots: " << slot_count << endl;
-    
-    // Create sample matrices (2x3 and 3x2)
-    size_t row_count1 = 2;
-    size_t col_count1 = 3;
-    size_t row_count2 = 3;
-    size_t col_count2 = 2;
-    
-    auto matrix1 = create_sample_matrix(row_count1, col_count1, 1.0, 1.0);
-    auto matrix2 = create_sample_matrix(row_count2, col_count2, 1.0, 1.0);
-    
-    cout << "Matrix 1:" << endl;
-    print_matrix(matrix1);
-    cout << "Matrix 2:" << endl;
-    print_matrix(matrix2);
-    
-    // Encode and encrypt matrix1 (row-wise)
-    vector<Plaintext> plain_matrix1(row_count1);
-    vector<Ciphertext> encrypted_matrix1(row_count1);
-    
-    for (size_t i = 0; i < row_count1; i++) {
-        vector<double> row_data(slot_count, 0.0);
-        copy(matrix1[i].begin(), matrix1[i].end(), row_data.begin());
-        encoder.encode(row_data, scale, plain_matrix1[i]);
-        encryptor.encrypt(plain_matrix1[i], encrypted_matrix1[i]);
+    double scale = pow(2.0, 40);
+    cout << "Number of CKKS slots available: " << slot_count << endl;
+
+    // Step 3: Create example matrices (2x3 × 3x2)
+    auto A = create_matrix(2, 3);  // 2x3
+    auto B = create_matrix(3, 2);  // 3x2
+    cout << "Matrix A:\n"; print_matrix(A);
+    cout << "Matrix B:\n"; print_matrix(B);
+
+    // Step 4: Encrypt rows of A
+    vector<Ciphertext> enc_rows_A;
+    for (const auto &row : A) {
+        vector<double> row_packed(slot_count, 0.0);
+        copy(row.begin(), row.end(), row_packed.begin());
+        Plaintext pt;
+        encoder.encode(row_packed, scale, pt);
+        Ciphertext ct;
+        encryptor.encrypt(pt, ct);
+        enc_rows_A.push_back(ct);
     }
-    
-    // Encode and encrypt matrix2 (column-wise, transposed)
-    vector<Plaintext> plain_matrix2(col_count2);
-    vector<Ciphertext> encrypted_matrix2(col_count2);
-    
-    for (size_t j = 0; j < col_count2; j++) {
+
+    // Step 5: Encrypt columns of B (transposed)
+    vector<Ciphertext> enc_cols_B;
+    for (size_t col = 0; col < B[0].size(); ++col) {
         vector<double> col_data(slot_count, 0.0);
-        for (size_t i = 0; i < row_count2; i++) {
-            col_data[i] = matrix2[i][j];
-        }
-        encoder.encode(col_data, scale, plain_matrix2[j]);
-        encryptor.encrypt(plain_matrix2[j], encrypted_matrix2[j]);
+        for (size_t row = 0; row < B.size(); ++row)
+            col_data[row] = B[row][col];
+        Plaintext pt;
+        encoder.encode(col_data, scale, pt);
+        Ciphertext ct;
+        encryptor.encrypt(pt, ct);
+        enc_cols_B.push_back(ct);
     }
-    
-    // Perform matrix multiplication
-    vector<vector<Ciphertext>> encrypted_result(row_count1, vector<Ciphertext>(col_count2));
-    
-    for (size_t i = 0; i < row_count1; i++) {
-        for (size_t j = 0; j < col_count2; j++) {
-            // Compute dot product between row i of matrix1 and column j of matrix2
-            Ciphertext product;
-            evaluator.multiply(encrypted_matrix1[i], encrypted_matrix2[j], product);
-            evaluator.relinearize_inplace(product, relin_keys);
-            evaluator.rescale_to_next_inplace(product);
-            
-            // Sum all elements in the product
-            Ciphertext sum = product;
-            for (size_t k = 1; k < col_count1; k <<= 1) {
+
+    // Step 6: Perform Encrypted Dot Products
+    vector<vector<Ciphertext>> enc_result(2, vector<Ciphertext>(2));
+
+    for (size_t i = 0; i < 2; i++) {
+        for (size_t j = 0; j < 2; j++) {
+            Ciphertext mult;
+            evaluator.multiply(enc_rows_A[i], enc_cols_B[j], mult);
+            evaluator.relinearize_inplace(mult, relin_keys);
+            evaluator.rescale_to_next_inplace(mult);
+
+            // Align scales & levels before summation
+            Ciphertext sum = mult;
+            for (size_t k = 1; k < 3; k <<= 1) {
                 Ciphertext rotated;
                 evaluator.rotate_vector(sum, k, gal_keys, rotated);
                 evaluator.add_inplace(sum, rotated);
             }
-            
-            encrypted_result[i][j] = sum;
+
+            enc_result[i][j] = sum;
         }
     }
-    
-    // Decrypt and decode results
-    vector<vector<double>> result(row_count1, vector<double>(col_count2));
-    
-    for (size_t i = 0; i < row_count1; i++) {
-        for (size_t j = 0; j < col_count2; j++) {
-            Plaintext plain_result;
-            decryptor.decrypt(encrypted_result[i][j], plain_result);
-            
-            vector<double> decoded_result;
-            encoder.decode(plain_result, decoded_result);
-            
-            result[i][j] = decoded_result[0]; // First slot contains the sum
+
+    // Step 7: Decrypt & decode result
+    vector<vector<double>> result(2, vector<double>(2));
+    for (size_t i = 0; i < 2; i++) {
+        for (size_t j = 0; j < 2; j++) {
+            Plaintext pt;
+            decryptor.decrypt(enc_result[i][j], pt);
+            vector<double> decoded;
+            encoder.decode(pt, decoded);
+            result[i][j] = decoded[0]; // First slot holds dot product
         }
     }
-    
-    cout << "Result of matrix multiplication:" << endl;
+
+    cout << "\nDecrypted Encrypted Result:\n";
     print_matrix(result);
-    
-    // Verify against plaintext computation
-    vector<vector<double>> expected_result(row_count1, vector<double>(col_count2, 0.0));
-    for (size_t i = 0; i < row_count1; i++) {
-        for (size_t j = 0; j < col_count2; j++) {
-            for (size_t k = 0; k < col_count1; k++) {
-                expected_result[i][j] += matrix1[i][k] * matrix2[k][j];
-            }
+
+    // Step 8: Plaintext matrix multiplication to verify
+    vector<vector<double>> expected(2, vector<double>(2, 0.0));
+    for (size_t i = 0; i < 2; i++)
+        for (size_t j = 0; j < 2; j++)
+            for (size_t k = 0; k < 3; k++)
+                expected[i][j] += A[i][k] * B[k][j];
+
+    cout << "Expected Plaintext Result:\n";
+    print_matrix(expected);
+
+    // Step 9: Compare with tolerance
+    cout << "Comparison (tolerance = 0.01):\n";
+    for (size_t i = 0; i < 2; i++) {
+        for (size_t j = 0; j < 2; j++) {
+            double err = fabs(result[i][j] - expected[i][j]);
+            cout << "[" << (err < 0.01 ? "OK" : "❌") << " error=" << err << "] ";
         }
+        cout << endl;
     }
-    
-    cout << "Expected result:" << endl;
-    print_matrix(expected_result);
 }
 
 int main() {
     try {
-        ckks_matrix_multiplication();
+        ckks_matrix_mult();
     } catch (const exception &e) {
-        cerr << "Error: " << e.what() << endl;
-        return -1;
+        cerr << "Exception: " << e.what() << endl;
+        return 1;
     }
     return 0;
 }
