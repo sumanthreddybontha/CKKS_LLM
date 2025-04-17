@@ -1,0 +1,139 @@
+Task: Convolution
+Technique: Zero shot Chain of thought prompting
+###Prompt:
+
+Write a CKKS code in python to perform convolution operation using openfhe. 
+Perform all the multiplications, addition and dot product operations through homomorphic operations using openfhe. 
+Let’s think step by step. Explain every step. 
+Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
+Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate
+
+-------------------------
+Technique: Self Consistency Decoding
+###Prompt:
+
+Write a CKKS code in python to perform convolution operation using openfhe. 
+Assume that matrix is of 10x10 and kernel is 3x3
+Perform all the multiplications, addition and dot product operations through homomorphic operations using openfhe. 
+Let’s think step by step. Explain every step. 
+Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
+Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate.
+
+
+###Self Consistency Prompt:
+
+I have generated the following responses to the question “Write a CKKS code in python to perform Convolution operation using openfhe.”
+Responses:
+Response 1:
+Response 2:
+Response 3:
+Response 4:
+Select the most consistent response based on majority consensus
+
+------------------------
+Technique: Self Improvement (Reflexion)
+
+###Prompt:
+
+Write a CKKS code in python to perform convolution operation using openfhe. 
+Assume that matrix is of nxn and kernel is kxk
+Perform all the multiplications, addition and dot product operations through homomorphic operations using openfhe. 
+Let’s think step by step. Explain every step. 
+Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
+Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate.
+
+------------------------
+We manually generated a knowledge graph using the existing codes available to us.
+
+Below is the knowledge graph obtained:
+
+
+
+Knowledge Graph:
+
+Nodes:
+Node: CCParamsCKKSRNS
+Node: SetMultiplicativeDepth
+Node: SetScalingModSize
+Node: SetFirstModSize
+Node: SetBatchSize
+Node: SetRingDim
+Node: GenCryptoContext
+Node: EnableFeature
+Node: KeyGen
+Node: EvalMultKeyGen
+Node: EvalRotateKeyGen
+Node: MakeCKKSPackedPlaintext
+Node: Encrypt
+Node: Decrypt
+Node: EvalAdd
+Node: EvalMult
+Node: EvalSum
+Node: EvalRotate
+Node: EvalPoly
+Node: PublicKey
+Node: SecretKey
+Node: EvalMultKey
+Node: RotationKey
+Node: PKESchemeFeature.PKE
+Node: PKESchemeFeature.KEYSWITCH
+Node: PKESchemeFeature.LEVELEDSHE
+Node: PKESchemeFeature.ADVANCEDSHE
+Node: CryptoContext
+Node: Encoding
+Node: Encryption
+Node: HomomorphicEvaluation
+Node: Decryption
+Node: indexes_for_rotation_key
+Node: mult_depth=4
+Node: ring_dimension=32768
+Node: scale_mod_size=59
+Node: first_mod_size=60
+Node: batch_size=16
+
+Relationships:
+CCParamsCKKSRNS --[configures]--> SetMultiplicativeDepth
+CCParamsCKKSRNS --[configures]--> SetScalingModSize
+CCParamsCKKSRNS --[configures]--> SetFirstModSize
+CCParamsCKKSRNS --[configures]--> SetBatchSize
+CCParamsCKKSRNS --[configures]--> SetRingDim
+SetMultiplicativeDepth --[sets]--> mult_depth=4
+SetScalingModSize --[sets]--> scale_mod_size=59
+SetFirstModSize --[sets]--> first_mod_size=60
+SetBatchSize --[sets]--> batch_size=16
+SetRingDim --[sets]--> ring_dimension=32768
+GenCryptoContext --[creates]--> CryptoContext
+EnableFeature --[enables]--> PKESchemeFeature.PKE
+EnableFeature --[enables]--> PKESchemeFeature.KEYSWITCH
+EnableFeature --[enables]--> PKESchemeFeature.LEVELEDSHE
+EnableFeature --[enables]--> PKESchemeFeature.ADVANCEDSHE
+KeyGen --[generates]--> PublicKey
+KeyGen --[generates]--> SecretKey
+EvalMultKeyGen --[generates]--> EvalMultKey
+EvalRotateKeyGen --[uses]--> indexes_for_rotation_key
+EvalRotateKeyGen --[generates]--> RotationKey
+MakeCKKSPackedPlaintext --[performs]--> Encoding
+Encrypt --[performs]--> Encryption
+Decrypt --[performs]--> Decryption
+EvalAdd --[supports]--> HomomorphicEvaluation
+EvalMult --[supports]--> HomomorphicEvaluation
+EvalMult --[requires]--> EvalMultKey
+EvalSum --[supports]--> HomomorphicEvaluation
+EvalRotate --[supports]--> HomomorphicEvaluation
+EvalRotate --[requires]--> RotationKey
+EvalPoly --[supports]--> HomomorphicEvaluation
+Encoding --[uses]--> SetScalingModSize
+HomomorphicEvaluation --[constrained_by]--> SetMultiplicativeDepth
+
+Prompt:
+
+Write a CKKS code in python to perform convolution operation using openfhe based on the knowledge graph.
+[Knowledge Graph]
+Assume that matrix is of nxn and kernel is kxk
+Perform all the multiplications, addition and dot product operations through homomorphic operations using openfhe. 
+Let’s think step by step. Explain every step. 
+Make sure to generate the appropriate context and parameter initialzation based on the open fhe library.
+Recheck the code for any compilations issue, make sure that the predefined methods or variables used for crypto context creation, key generation, parameter initialization are accurate.
+
+Lets think step by step.
+Recheck for correctness and only write what is required, run a trace internally.
