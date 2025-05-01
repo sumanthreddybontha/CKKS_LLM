@@ -1,1 +1,13 @@
 run_eval_seal.sh: line 43: timeout: command not found
+Error in retrieval: result ciphertext is transparent
+Error in retrieval: result ciphertext is transparent
+Error in retrieval: result ciphertext is transparent
+Error in retrieval: result ciphertext is transparent
+Error in retrieval: result ciphertext is transparent
+Error in retrieval: result ciphertext is transparent
+Error in retrieval: result ciphertext is transparent
+Error in retrieval: result ciphertext is transparent
+Error in retrieval: result ciphertext is transparent
+Error in retrieval: result ciphertext is transparent
+Error in retrieval: result ciphertext is transparent
+Error in retrieval: result ciphertext is transparent

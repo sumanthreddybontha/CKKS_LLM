@@ -1,1 +1,10 @@
 run_eval_seal.sh: line 43: timeout: command not found
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encryption parameters are not set correctly
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encryption parameters are not set correctly
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encryption parameters are not set correctly
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encryption parameters are not set correctly
+Error getting noise budget: unsupported scheme
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encryption parameters are not set correctly
+Error getting noise budget: unsupported scheme
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encryption parameters are not set correctly
+Error getting noise budget: unsupported scheme

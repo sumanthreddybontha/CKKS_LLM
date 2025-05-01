@@ -11,3 +11,48 @@ libc++abi: terminating due to uncaught exception of type std::invalid_argument: 
 libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
 libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
 libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: end of modulus switching chain reached
+libc++abi: terminating due to uncaught exception of type std::logic_error: unsupported scheme
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted and plain parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: end of modulus switching chain reached
+libc++abi: terminating due to uncaught exception of type std::logic_error: unsupported scheme
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted and plain parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: end of modulus switching chain reached
+libc++abi: terminating due to uncaught exception of type std::logic_error: unsupported scheme
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted and plain parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: end of modulus switching chain reached
+Error in process_chunk: scale mismatch
+Error in process_graph: scale mismatch
+Error in run(): scale mismatch
+libc++abi: terminating due to uncaught exception of type std::logic_error: unsupported scheme
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted and plain parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: end of modulus switching chain reached
+Error in process_chunk: scale mismatch
+Error in process_graph: scale mismatch
+Error in run(): scale mismatch
+libc++abi: terminating due to uncaught exception of type std::logic_error: unsupported scheme
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted and plain parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: end of modulus switching chain reached
+Error in process_chunk: scale mismatch
+Error in process_graph: scale mismatch
+Error in run(): scale mismatch
+libc++abi: terminating due to uncaught exception of type std::logic_error: unsupported scheme
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted and plain parameter mismatch

@@ -23,3 +23,21 @@ libc++abi: terminating due to uncaught exception of type std::invalid_argument: 
 Could not open vectors.txt
 libc++abi: terminating due to uncaught exception of type std::length_error: vector
 libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+Could not open vectors.txt
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: scale mismatch
+Could not open vectors.txt
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: scale mismatch
+Could not open vectors.txt
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: scale mismatch
+Could not open vectors.txt
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: scale mismatch
+Could not open vectors.txt
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: scale mismatch
+Could not open vectors.txt
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: encrypted1 and encrypted2 parameter mismatch
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: scale mismatch
